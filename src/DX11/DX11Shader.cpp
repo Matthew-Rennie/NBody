@@ -2,18 +2,12 @@
 #include "DX11Shader.h"
 #include <string>
 #include <D3Dcompiler.h>
-#include "core/BaseRenderer.h"
 #include "DX11_Renderer.h"
 #include <stdexcept>
 
-dx11::DX11Shader::DX11Shader(core::BaseRenderer* renderer)
+dx11::DX11Shader::DX11Shader(dx11::DX11_Renderer* renderer)
 {
-	DX11_Renderer* dx11_renderer = dynamic_cast<DX11_Renderer*>(renderer);
-
-	if (!dx11_renderer)
-		throw std::runtime_error("invalid rendere type");
-
-	m_device = dx11_renderer->get_d3d()->getDevice();
+	m_device = renderer->get_d3d()->getDevice();
 }
 
 dx11::DX11Shader::~DX11Shader()

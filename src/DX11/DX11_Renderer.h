@@ -1,5 +1,4 @@
 #pragma once
-#include "core/BaseRenderer.h"
 #include <windows.h>
 #include "core/Input.h"
 #include "D3D.h"
@@ -9,53 +8,68 @@
 #include "core/Window.h"
 #include "ConstantBuffer.h"
 
-#include "core/BaseShader.h"
+#include "glm/glm.hpp"
+#include "DX11Shader.h"
+
+namespace graphics
+{
+	struct Texture;
+};
+
+namespace core
+{
+	class BaseVertexBuffer;
+	class Window;
+	class BaseShader;
+	struct ShaderData;
+}
 
 namespace dx11
 {
 	class DX11Shader;
+	class DX11VertexBuffer;
 
-	class DX11_Renderer : public core::BaseRenderer
+	class DX11_Renderer
 	{
 	public:
 
 		DX11_Renderer(core::Input* in);
 		~DX11_Renderer();
 
-		virtual bool init(core::Window* window) override;
-		virtual bool release() override;
+		bool init(core::Window* window);
+		bool release();
 
-		virtual void begin_frame() override;
-		virtual void end_frame() override;
-		virtual void clear_display() override;
+		void begin_frame();
+		void end_frame();
+		void clear_display();
 
-		virtual void set_wireframe(bool b) override;
-		virtual bool get_wireframe() override;
+		void set_wireframe(bool b);
+		bool get_wireframe();
 
-		virtual void set_vsync(bool b) override;
-		virtual bool get_vsync() override;
+		void set_vsync(bool b);
+		bool get_vsync();
 
-		virtual void set_resolution(int width, int height) override;
+		void set_resolution(int width, int height);
 
-		virtual void render(core::BaseVertexBuffer* vbuff) override;
-		virtual void set_shader(core::BaseShader* shader) override;
-		glm::mat4x4 getProjectionMatrix(float fov_deg) override;
+		void render(dx11::DX11VertexBuffer* vbuff);
+		void set_shader(DX11Shader* shader);
+		glm::mat4x4 getProjectionMatrix(float fov_deg);
 
-		virtual void setTargetBackBuffer() override;
-		virtual void setTexture(graphics::Texture* texture, int slot) override;
+		virtual void setTargetBackBuffer();
+		virtual void setTexture(graphics::Texture* texture, int slot);
 
 		D3D* get_d3d() { return m_d3d; }
 		const D3D* get_d3d() const { return m_d3d; }
 
+		void send_data(const ShaderData* data);
+
 	private:
 
-		void send_data(const core::ShaderData* data) override;
-
-		ConstantBuffer<core::ShaderDataEntry::buffer_size> m_PS_cbuffs[core::ShaderData::num_slots] = {};
-		ConstantBuffer<core::ShaderDataEntry::buffer_size> m_VS_cbuffs[core::ShaderData::num_slots] = {};
-		ConstantBuffer<core::ShaderDataEntry::buffer_size> m_HS_cbuffs[core::ShaderData::num_slots] = {};
-		ConstantBuffer<core::ShaderDataEntry::buffer_size> m_DS_cbuffs[core::ShaderData::num_slots] = {};
-		ConstantBuffer<core::ShaderDataEntry::buffer_size> m_GS_cbuffs[core::ShaderData::num_slots] = {};
+		ConstantBuffer<ShaderDataEntry::buffer_size> m_PS_cbuffs[ShaderData::num_slots] = {};
+		ConstantBuffer<ShaderDataEntry::buffer_size> m_VS_cbuffs[ShaderData::num_slots] = {};
+		ConstantBuffer<ShaderDataEntry::buffer_size> m_HS_cbuffs[ShaderData::num_slots] = {};
+		ConstantBuffer<ShaderDataEntry::buffer_size> m_DS_cbuffs[ShaderData::num_slots] = {};
+		ConstantBuffer<ShaderDataEntry::buffer_size> m_GS_cbuffs[ShaderData::num_slots] = {};
 
 		void realloc_d3d();
 		D3D* m_d3d = nullptr;

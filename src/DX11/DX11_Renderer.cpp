@@ -32,7 +32,7 @@ bool dx11::DX11_Renderer::init(core::Window* window)
 	ImGui_ImplWin32_Init(m_window->hwnd());
 	ImGui_ImplDX11_Init(m_d3d->getDevice(), m_d3d->getDeviceContext());
 
-	for (int slot = 0; slot < core::ShaderData::num_slots; slot++)
+	for (int slot = 0; slot < dx11::ShaderData::num_slots; slot++)
 	{
 		m_VS_cbuffs[slot].initBuffer(m_d3d->getDevice());
 		m_PS_cbuffs[slot].initBuffer(m_d3d->getDevice());
@@ -119,31 +119,24 @@ void dx11::DX11_Renderer::set_resolution(int width, int height)
 	}
 }
 
-void dx11::DX11_Renderer::render(core::BaseVertexBuffer* vbuff)
+void dx11::DX11_Renderer::render(dx11::DX11VertexBuffer* vbuff)
 {
-	DX11VertexBuffer* dx11_vbuff = dynamic_cast<DX11VertexBuffer*>(vbuff);
-
-	if (!dx11_vbuff)
-	{
-		throw std::runtime_error("could not cast vbuff to type dx11::DX11VertexBuffer");
-	}
-
 	UINT stride = sizeof(dx11::DX11VertexBuffer::DX11VertexType);
 	UINT offset = 0;
 
 	// Set vertex buffer stride and offset.
 
-	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, dx11_vbuff->pVertexBuffer(), &stride, &offset);
-	m_d3d->getDeviceContext()->IASetIndexBuffer(dx11_vbuff->IndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, vbuff->pVertexBuffer(), &stride, &offset);
+	m_d3d->getDeviceContext()->IASetIndexBuffer(vbuff->IndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 	m_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_sampleState);
 
-	m_shader->run(m_d3d->getDeviceContext(), dx11_vbuff->IndexCount());
+	m_shader->run(m_d3d->getDeviceContext(), vbuff->IndexCount());
 }
 
-void dx11::DX11_Renderer::set_shader(core::BaseShader* shader)
+void dx11::DX11_Renderer::set_shader(DX11Shader* shader)
 {
-	m_shader = dynamic_cast<DX11Shader*>(shader);
+	m_shader = shader;
 }
 
 glm::mat4x4 dx11::DX11_Renderer::getProjectionMatrix(float fov_deg)
@@ -170,7 +163,7 @@ void dx11::DX11_Renderer::setTexture(graphics::Texture* texture, int slot)
 	m_d3d->getDeviceContext()->PSSetShaderResources(slot, 1, &texture->dx11_texture);
 }
 
-void dx11::DX11_Renderer::send_data(const core::ShaderData* data)
+void dx11::DX11_Renderer::send_data(const dx11::ShaderData* data)
 {
 	if (!m_shader)
 		return;
@@ -260,7 +253,7 @@ void dx11::DX11_Renderer::send_data(const core::ShaderData* data)
 		cbuff->setBuffer_GS(m_d3d->getDeviceContext());
 	};
 
-	for (int slot = 0; slot < core::ShaderData::num_slots; slot++)
+	for (int slot = 0; slot < dx11::ShaderData::num_slots; slot++)
 	{
 		sendPS(slot);
 		sendVS(slot);

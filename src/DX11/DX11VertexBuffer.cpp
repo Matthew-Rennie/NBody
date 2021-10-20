@@ -2,6 +2,7 @@
 #include "DX11VertexBuffer.h"
 #include "DX11_Renderer.h"
 #include <stdexcept>
+#include "DX11_Renderer.h"
 
 dx11::DX11VertexBuffer::~DX11VertexBuffer()
 {
@@ -17,7 +18,7 @@ dx11::DX11VertexBuffer::~DX11VertexBuffer()
 	}
 }
 
-void dx11::DX11VertexBuffer::init(core::BaseRenderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_bufer, size_t index_count)
+void dx11::DX11VertexBuffer::init(dx11::DX11_Renderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_bufer, size_t index_count)
 {
 	DX11_Renderer* dx11_renderer = dynamic_cast<DX11_Renderer*>(renderer);
 	if (!dx11_renderer)

@@ -2,10 +2,22 @@
 #include "Game.h"
 #include "imGUI/imgui.h"
 #include "DX11/DX11_Renderer.h"
+#include "core/Window.h"
+#include "graphics/TextureManager.h"
+#include "DX11/DX11VertexBuffer.h"
 
 bool Game::init()
 {
-	load_renderer(core::RendererType::DX11);
+	core::Window::WindowConfig config;
+	config.borderless = true;
+	config.width = 0;
+	config.height = 0;
+	m_window = new core::Window(&m_input);
+	m_window->init(config);
+
+	m_renderer = new dx11::DX11_Renderer(&m_input);
+	m_renderer->init(m_window);
+
 	m_shader = new dx11::DX11Shader(m_renderer);
 	m_shader->load_VS(L"shader_vs.cso");
 	m_shader->load_PS(L"shader_ps.cso");
@@ -15,7 +27,8 @@ bool Game::init()
 	camera.setInput(&m_input);
 	camera.setWindow(m_window);
 
-	m_textureManager.AddTexture(L"res/bunny.png", "bunny");
+	m_textureManager = new graphics::TextureManager(m_renderer);
+	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
 
 	return true;
 }
@@ -42,7 +55,7 @@ bool Game::render()
 	};
 	static_assert(sizeof(BuffType) <= 512);
 
-	core::ShaderData* shader_data = new core::ShaderData();
+	dx11::ShaderData* shader_data = new dx11::ShaderData();
 	shader_data->vs_data[0].enable = true;
 
 	BuffType* bufftype = (BuffType*)shader_data->vs_data[0].buffer;
@@ -59,7 +72,7 @@ bool Game::render()
 
 	m_renderer->set_shader(m_shader);
 	m_renderer->send_data(shader_data);
-	m_renderer->setTexture(m_textureManager.getTexture("bunny"), 0);
+	m_renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
 	m_renderer->render(&m_vbuffer);
 
 	m_renderer->end_frame();
@@ -73,8 +86,8 @@ void Game::generate_ortho_mesh()
 {
 	size_t index_count = 6;
 	size_t vertex_count = 4;
-	core::BaseVertexBuffer::VertexType* vertex_buff = new core::BaseVertexBuffer::VertexType[vertex_count];
-	core::BaseVertexBuffer::IndexType* index_buff = new core::BaseVertexBuffer::IndexType[index_count];
+	dx11::VertexType* vertex_buff = new dx11::VertexType[vertex_count];
+	dx11::IndexType* index_buff = new dx11::IndexType[index_count];
 
 	float left, right, top, bottom;
 
@@ -146,8 +159,8 @@ void Game::generate_terrain_mesh(int resolution)
 {
 	size_t index_count = resolution * resolution * 6;
 	size_t vertex_count = (resolution + 1) * (resolution + 1);
-	core::BaseVertexBuffer::VertexType* vertex_buff = new core::BaseVertexBuffer::VertexType[vertex_count];
-	core::BaseVertexBuffer::IndexType* index_buff = new core::BaseVertexBuffer::IndexType[index_count];
+	dx11::VertexType* vertex_buff = new dx11::VertexType[vertex_count];
+	dx11::IndexType* index_buff = new dx11::IndexType[index_count];
 
 	int index;
 	float positionX, positionZ, u, v, increment;

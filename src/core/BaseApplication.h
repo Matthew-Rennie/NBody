@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BaseRenderer.h"
 #include "Input.h"
 
 namespace core
@@ -11,9 +10,9 @@ namespace core
 
 		virtual ~BaseApplication() = default;
 
-		virtual bool init() = 0;
-		virtual bool update(const float frame_time) = 0;
-		virtual bool render() = 0;
+		virtual bool init() { return true; };
+		virtual bool update(const float frame_time) { return true; };
+		virtual bool render() { return true; };
 
 	protected:
 		Input m_input;

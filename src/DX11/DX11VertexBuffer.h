@@ -1,12 +1,22 @@
 #pragma once
 
-#include "core/BaseVertexBuffer.h"
 #include <d3d11.h>
 #include <directxmath.h>
 
 namespace dx11
 {
-	class DX11VertexBuffer : public core::BaseVertexBuffer
+	class DX11_Renderer;
+
+	using IndexType = unsigned long;
+
+	struct VertexType
+	{
+		float position[3] = {};
+		float texture[2] = {};
+		float normal[3] = {};
+	};
+
+	class DX11VertexBuffer
 	{
 	public:
 
@@ -19,7 +29,7 @@ namespace dx11
 
 		~DX11VertexBuffer();
 
-		void init(core::BaseRenderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_buffer, size_t index_count) override;
+		void init(dx11::DX11_Renderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_buffer, size_t index_count);
 
 		size_t VertexCount() const { return m_vertex_count; }
 		size_t IndexCount() const { return m_index_count; }
