@@ -1,31 +1,15 @@
-local ROOT = "../../"
+local ROOT = "../../../"
 
-dofile "DX11PM5.lua"
-
- project "Graphics"
+ project "glm"
   kind "StaticLib"
   language "C++"
-  targetname "Graphics" -- the name of the executable saved to targetdir
+  targetname "glm" -- the name of the executable saved to targetdir
 
   -----------------------------------
 -- COMPILER/LINKER CONFIGURATIONS
 -----------------------------------
    
-filter { "platforms:*32" }
-  architecture "x86"
-filter { "platforms:*64" }
-  architecture "x64"
-  
-filter { "configurations:Debug" }
-  defines { "DEBUG" }
-  symbols "On"
-filter { "configurations:Release" }
-  defines { "NDEBUG" }
-  optimize "On"
-
-    -- Exclude template files from project (so they don't accidentally get compiled)
- filter { "files:**.tpp" }
- flags {"ExcludeFromBuild"}
+  dofile "../util/config.lua"
 
   filter {} -- reset filter
 
@@ -33,8 +17,8 @@ filter { "configurations:Release" }
   targetdir(output_dir_root)    -- Where all output files are stored
 
   local source_dir_root         = ROOT .. "src"
-  local source_dir_engine       = source_dir_root .. "/graphics"
   local source_dir_dependencies = source_dir_root .. "/extern"
+  local source_dir_engine       = source_dir_root .. "/extern/Includes/glm"
 
   local source_dir_includes     = source_dir_dependencies .. "/Includes"
   local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.host()
@@ -52,13 +36,6 @@ filter { "configurations:Release" }
     source_dir_engine .. "/**.hpp",
     source_dir_engine .. "/**.hlsl",
     source_dir_engine .. "/**.glsl",
-  }
-
-  links
-  {
-    "imGUI",
-    "DX11",
-    "glm"
   }
 
    -- Where compiler should look for library includes

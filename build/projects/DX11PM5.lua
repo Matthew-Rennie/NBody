@@ -54,7 +54,8 @@ filter { "configurations:Release" }
 
   links
   {
-    "DirectXTK"
+    "DirectXTK",
+    "glm"
   }
 
    -- Where compiler should look for library includes
