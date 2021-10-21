@@ -9,7 +9,21 @@ local ROOT = "../../../"
 -- COMPILER/LINKER CONFIGURATIONS
 -----------------------------------
    
-  dofile "../util/config.lua"
+filter { "platforms:*32" }
+architecture "x86"
+filter { "platforms:*64" }
+architecture "x64"
+
+filter { "configurations:Debug" }
+defines { "DEBUG" }
+symbols "On"
+filter { "configurations:Release" }
+defines { "NDEBUG" }
+optimize "On"
+
+  -- Exclude template files from project (so they don't accidentally get compiled)
+filter { "files:**.tpp" }
+flags {"ExcludeFromBuild"}
 
   filter {} -- reset filter
 
