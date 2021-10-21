@@ -29,12 +29,12 @@ namespace dx11
 	class DX11Shader;
 	class DX11VertexBuffer;
 
-	class DX11_Renderer
+	class DX11Renderer
 	{
 	public:
 
-		DX11_Renderer(core::Input* in);
-		~DX11_Renderer();
+		DX11Renderer(core::Input* in);
+		~DX11Renderer();
 
 		bool init(core::Window* window);
 		bool release();

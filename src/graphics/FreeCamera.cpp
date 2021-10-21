@@ -1,5 +1,6 @@
 #include "FreeCamera.h"
 #include "core/Window.h"
+#include "core/Input.h"
 
 void graphics::FreeCamera::handleInput(float dt)
 {

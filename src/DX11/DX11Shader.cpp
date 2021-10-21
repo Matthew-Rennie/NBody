@@ -2,10 +2,10 @@
 #include "DX11Shader.h"
 #include <string>
 #include <D3Dcompiler.h>
-#include "DX11_Renderer.h"
+#include "DX11Renderer.h"
 #include <stdexcept>
 
-dx11::DX11Shader::DX11Shader(dx11::DX11_Renderer* renderer)
+dx11::DX11Shader::DX11Shader(dx11::DX11Renderer* renderer)
 {
 	m_device = renderer->get_d3d()->getDevice();
 }

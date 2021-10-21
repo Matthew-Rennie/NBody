@@ -22,13 +22,13 @@ namespace dx11
 		ShaderDataEntry gs_data[num_slots] = {};
 	};
 
-	class DX11_Renderer;
+	class DX11Renderer;
 
 	class DX11Shader
 	{
 	public:
 
-		DX11Shader(dx11::DX11_Renderer* renderer);
+		DX11Shader(dx11::DX11Renderer* renderer);
 		~DX11Shader();
 		void Release();
 

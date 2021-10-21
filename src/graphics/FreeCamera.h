@@ -1,5 +1,6 @@
 #pragma once
 #include "CustomCamera.h"
+#include "windows.h"
 
 namespace graphics
 {

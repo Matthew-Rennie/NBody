@@ -10,9 +10,10 @@ namespace core
 
 		virtual ~BaseApplication() = default;
 
-		virtual bool init() { return true; };
-		virtual bool update(const float frame_time) { return true; };
-		virtual bool render() { return true; };
+		virtual bool Init() { return true; };
+		virtual bool Release() { return true; }
+		virtual bool Update(const float frame_time) { return true; };
+		virtual bool Render() { return true; };
 
 	protected:
 		Input m_input;

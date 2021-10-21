@@ -1,15 +1,14 @@
 #pragma once
 
 #include <windows.h>
-#include "Input.h"
 
 namespace core
 {
+	class Input;
+
 	class Window
 	{
 	public:
-		Window(Input* in);
-		~Window();
 
 		struct WindowConfig
 		{
@@ -21,16 +20,14 @@ namespace core
 			int height = 0;
 		};
 
-		void init(const WindowConfig& config);
-		void release();
+		Window(Input* in, const WindowConfig& config);
+		~Window();
 
 		HWND hwnd() { return m_hwnd; }
 		int screen_width() { return m_width; }
 		int screen_height() { return m_height; }
 
 	private:
-
-		bool m_initialised = false;
 
 		int m_width = 0;
 		int m_height = 0;

@@ -9,13 +9,10 @@ namespace core
 	{
 	public:
 
-		System(BaseApplication* app);
-
-		void run();
+		void Run(BaseApplication* app);
 
 	protected:
 
 		core::Timer m_timer;
-		BaseApplication* m_app = nullptr;
 	};
 }

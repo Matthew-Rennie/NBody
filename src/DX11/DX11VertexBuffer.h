@@ -5,7 +5,7 @@
 
 namespace dx11
 {
-	class DX11_Renderer;
+	class DX11Renderer;
 
 	using IndexType = unsigned long;
 
@@ -29,7 +29,7 @@ namespace dx11
 
 		~DX11VertexBuffer();
 
-		void init(dx11::DX11_Renderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_buffer, size_t index_count);
+		void init(dx11::DX11Renderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_buffer, size_t index_count);
 
 		size_t VertexCount() const { return m_vertex_count; }
 		size_t IndexCount() const { return m_index_count; }

@@ -3,13 +3,7 @@
 
 #include <windows.h>
 
-core::System::System(BaseApplication* app)
-	: m_app(app)
-{
-	m_app->init();
-}
-
-void core::System::run()
+void core::System::Run(BaseApplication* app)
 {
 	MSG msg;
 	bool done, result;
@@ -17,8 +11,9 @@ void core::System::run()
 	// Initialize the message structure.
 	ZeroMemory(&msg, sizeof(MSG));
 
+	done = !app->Init();
+
 	// Loop until there is a quit message from the window or the user.
-	done = false;
 	while (!done)
 	{
 		// Handle the windows messages.
@@ -33,23 +28,14 @@ void core::System::run()
 		}
 		else
 		{
-			// If windows signals to end the application then exit out.
-			//if (msg.message == WM_QUIT)
-			//{
-			//	done = true;
-			//}
-			//else
-			//{
-			// Otherwise do the frame processing.
-
 			m_timer.frame();
-			result = m_app->update(m_timer.getTime());
+			result = app->Update(m_timer.getTime());
 			if (!result)
 			{
 				done = true;
 				break;
 			}
-			result = m_app->render();
+			result = app->Render();
 			if (!result)
 			{
 				done = true;
@@ -59,6 +45,9 @@ void core::System::run()
 			//}
 		}
 	}
+
+	app->Release();
+
 	PostQuitMessage(0);
 	return;
 }

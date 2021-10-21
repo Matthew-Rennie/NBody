@@ -1,28 +1,30 @@
 #include "stdafx.hpp"
 #include "Game.h"
 #include "imGUI/imgui.h"
-#include "DX11/DX11_Renderer.h"
 #include "core/Window.h"
 #include "graphics/TextureManager.h"
+
+#include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
+#include "DX11/DX11Shader.h"
 
-bool Game::init()
+bool Game::Init()
 {
-	core::Window::WindowConfig config;
-	config.borderless = true;
-	config.width = 0;
-	config.height = 0;
-	m_window = new core::Window(&m_input);
-	m_window->init(config);
+	if (!BaseApplication::Init())
+		return false;
 
-	m_renderer = new dx11::DX11_Renderer(&m_input);
+	InitWindow();
+
+	m_renderer = new dx11::DX11Renderer(&m_input);
 	m_renderer->init(m_window);
 
 	m_shader = new dx11::DX11Shader(m_renderer);
 	m_shader->load_VS(L"shader_vs.cso");
 	m_shader->load_PS(L"shader_ps.cso");
 
-	generate_terrain_mesh(5);
+	m_vbuffer = new dx11::DX11VertexBuffer();
+
+	GenerateTerrainMesh(5);
 
 	camera.setInput(&m_input);
 	camera.setWindow(m_window);
@@ -33,8 +35,25 @@ bool Game::init()
 	return true;
 }
 
-bool Game::update(const float frame_time)
+bool Game::Release()
 {
+	if (!BaseApplication::Release())
+		return false;
+
+	SAFE_DELETE(m_renderer);
+	SAFE_DELETE(m_shader);
+	SAFE_DELETE(m_vbuffer);
+	SAFE_DELETE(m_window);
+	SAFE_DELETE(m_textureManager);
+
+	return true;
+}
+
+bool Game::Update(const float frame_time)
+{
+	if (!BaseApplication::Update(frame_time))
+		return false;
+
 	if (m_input.isKeyDown(VK_ESCAPE))
 	{
 		return false;
@@ -43,8 +62,11 @@ bool Game::update(const float frame_time)
 	return true;
 }
 
-bool Game::render()
+bool Game::Render()
 {
+	if (!BaseApplication::Render())
+		return false;
+
 	camera.update();
 
 	struct BuffType
@@ -73,7 +95,7 @@ bool Game::render()
 	m_renderer->set_shader(m_shader);
 	m_renderer->send_data(shader_data);
 	m_renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
-	m_renderer->render(&m_vbuffer);
+	m_renderer->render(m_vbuffer);
 
 	m_renderer->end_frame();
 
@@ -82,80 +104,16 @@ bool Game::render()
 	return true;
 }
 
-void Game::generate_ortho_mesh()
+void Game::InitWindow()
 {
-	size_t index_count = 6;
-	size_t vertex_count = 4;
-	dx11::VertexType* vertex_buff = new dx11::VertexType[vertex_count];
-	dx11::IndexType* index_buff = new dx11::IndexType[index_count];
-
-	float left, right, top, bottom;
-
-	// Calculate the screen coordinates of the left side of the window.
-	left = (float)((1920 / 2) * -1);
-
-	// Calculate the screen coordinates of the right side of the window.
-	right = left + (float)1920;
-
-	// Calculate the screen coordinates of the top of the window.
-	top = (float)(1080 / 2);
-
-	// Calculate the screen coordinates of the bottom of the window.
-	bottom = top - (float)1080;
-
-	// Load the vertex array with data.
-	vertex_buff[0].position[0] = left;
-	vertex_buff[0].position[1] = bottom;
-	vertex_buff[0].position[2] = 0.0f;
-	vertex_buff[0].texture[0] = 0.0f;
-	vertex_buff[0].texture[1] = 0.0f;
-	vertex_buff[0].normal[0] = 0.0f;
-	vertex_buff[0].normal[1] = 0.0f;
-	vertex_buff[0].normal[2] = -1.0f;
-
-	vertex_buff[1].position[0] = left;
-	vertex_buff[1].position[1] = top;
-	vertex_buff[1].position[2] = 0.0f;
-	vertex_buff[1].texture[0] = 0.0f;
-	vertex_buff[1].texture[1] = 1.0f;
-	vertex_buff[1].normal[0] = 0.0f;
-	vertex_buff[1].normal[1] = 0.0f;
-	vertex_buff[1].normal[2] = -1.0f;
-
-	vertex_buff[2].position[0] = right;
-	vertex_buff[2].position[1] = top;
-	vertex_buff[2].position[2] = 0.0f;
-	vertex_buff[2].texture[0] = 1.0f;
-	vertex_buff[2].texture[1] = 0.0f;
-	vertex_buff[2].normal[0] = 0.0f;
-	vertex_buff[2].normal[1] = 0.0f;
-	vertex_buff[2].normal[2] = -1.0f;
-
-	vertex_buff[3].position[0] = right;
-	vertex_buff[3].position[1] = bottom;
-	vertex_buff[3].position[2] = 0.0f;
-	vertex_buff[3].texture[0] = 1.0f;
-	vertex_buff[3].texture[1] = 01.0f;
-	vertex_buff[3].normal[0] = 0.0f;
-	vertex_buff[3].normal[1] = 0.0f;
-	vertex_buff[3].normal[2] = -1.0f;
-
-	// Load the index array with data.
-	index_buff[0] = 0;  // Bottom left.
-	index_buff[1] = 2;  // Top right.
-	index_buff[2] = 1;  // Top left.
-
-	index_buff[3] = 0;	// bottom left
-	index_buff[4] = 3;	// bottom right
-	index_buff[5] = 2;	// top right
-
-	m_vbuffer.init(m_renderer, vertex_buff, vertex_count, index_buff, index_count);
-
-	delete[] vertex_buff;
-	delete[] index_buff;
+	core::Window::WindowConfig config;
+	config.borderless = true;
+	config.width = 0;
+	config.height = 0;
+	m_window = new core::Window(&m_input, config);
 }
 
-void Game::generate_terrain_mesh(int resolution)
+void Game::GenerateTerrainMesh(int resolution)
 {
 	size_t index_count = resolution * resolution * 6;
 	size_t vertex_count = (resolution + 1) * (resolution + 1);
@@ -240,7 +198,7 @@ void Game::generate_terrain_mesh(int resolution)
 		}
 	}
 
-	m_vbuffer.init(m_renderer, vertex_buff, vertex_count, index_buff, index_count);
+	m_vbuffer->init(m_renderer, vertex_buff, vertex_count, index_buff, index_count);
 
 	delete[] vertex_buff;
 	delete[] index_buff;

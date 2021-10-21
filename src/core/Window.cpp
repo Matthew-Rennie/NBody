@@ -1,24 +1,10 @@
 #include "stdafx.hpp"
 #include "Window.h"
+#include "Input.h"
 
-core::Window::Window(Input* in)
+core::Window::Window(Input* in, const WindowConfig& config)
 	: m_input(in)
 {
-}
-
-core::Window::~Window()
-{
-	release();
-}
-
-void core::Window::init(const WindowConfig& config)
-{
-	if (m_initialised)
-	{
-		return;
-	}
-	m_initialised = true;
-
 	ApplicationHandle = this;
 
 	WNDCLASSEX wc;
@@ -73,14 +59,8 @@ void core::Window::init(const WindowConfig& config)
 	SetFocus(m_hwnd);
 }
 
-void core::Window::release()
+core::Window::~Window()
 {
-	if (!m_initialised)
-	{
-		return;
-	}
-	m_initialised = false;
-
 	ApplicationHandle = nullptr;
 
 	// Show the mouse cursor.

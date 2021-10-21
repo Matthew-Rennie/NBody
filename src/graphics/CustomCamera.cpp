@@ -1,5 +1,7 @@
 #include "CustomCamera.h"
 
+#include "core/Input.h"
+
 graphics::CustomCamera::CustomCamera()
 {
 	m_position = glm::vec3(0.f, 0.f, 0.f);

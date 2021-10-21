@@ -3,9 +3,10 @@
 #include "DirectXTK\DDSTextureLoader.h"
 #include "DirectXTK\WICTextureLoader.h"
 #include <fstream>
-#include "DX11/DX11_Renderer.h"
+#include "DX11/DX11Renderer.h"
+#include "d3d11.h"
 
-graphics::TextureManager::TextureManager(dx11::DX11_Renderer* renderer)
+graphics::TextureManager::TextureManager(dx11::DX11Renderer* renderer)
 {
 	m_renderer = renderer;
 }

@@ -5,14 +5,14 @@
 
 int main(int argc, char* argv[])
 {
-	Game* app = new Game();
-	core::System* system;
-
-	// Create the system object.
-	system = new core::System(app);
+	auto app = new Game();
+	core::System system;
 
 	// Initialize and run the system object.
-	system->run();
+	system.Run(app);
+
+	delete app;
+	app = nullptr;
 
 	return 0;
 }

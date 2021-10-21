@@ -1,14 +1,13 @@
 #pragma once
 
 #include <string>
-#include "d3d11.h"
-#include "dx11/DX11_Renderer.h"
-#include <vector>
 #include <unordered_map>
+
+struct ID3D11ShaderResourceView;
 
 namespace dx11
 {
-	class DX11_Renderer;
+	class DX11Renderer;
 }
 
 namespace graphics
@@ -23,7 +22,7 @@ namespace graphics
 	{
 	public:
 
-		TextureManager(dx11::DX11_Renderer* renderer);
+		TextureManager(dx11::DX11Renderer* renderer);
 
 		bool AddTexture(const std::wstring& filename, const std::string& name);
 
@@ -33,7 +32,7 @@ namespace graphics
 
 	private:
 
-		dx11::DX11_Renderer* m_renderer = nullptr;
+		dx11::DX11Renderer* m_renderer = nullptr;
 
 		bool does_file_exist(const wchar_t* fileName);
 

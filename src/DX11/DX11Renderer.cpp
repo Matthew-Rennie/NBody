@@ -1,5 +1,5 @@
 #include "stdafx.hpp"
-#include "DX11_Renderer.h"
+#include "DX11Renderer.h"
 #include "DX11VertexBuffer.h"
 #include "DX11Shader.h"
 #include <stdexcept>
@@ -8,16 +8,16 @@
 #include "imGUI/imgui_impl_win32.h"
 #include "graphics/TextureManager.h"
 
-dx11::DX11_Renderer::DX11_Renderer(core::Input* in)
+dx11::DX11Renderer::DX11Renderer(core::Input* in)
 {
 }
 
-dx11::DX11_Renderer::~DX11_Renderer()
+dx11::DX11Renderer::~DX11Renderer()
 {
 	release();
 }
 
-bool dx11::DX11_Renderer::init(core::Window* window)
+bool dx11::DX11Renderer::init(core::Window* window)
 {
 	m_window = window;
 
@@ -50,7 +50,7 @@ bool dx11::DX11_Renderer::init(core::Window* window)
 	return true;
 }
 
-bool dx11::DX11_Renderer::release()
+bool dx11::DX11Renderer::release()
 {
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -64,7 +64,7 @@ bool dx11::DX11_Renderer::release()
 	return true;
 }
 
-void dx11::DX11_Renderer::begin_frame()
+void dx11::DX11Renderer::begin_frame()
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -72,14 +72,14 @@ void dx11::DX11_Renderer::begin_frame()
 	clear_display();
 }
 
-void dx11::DX11_Renderer::end_frame()
+void dx11::DX11Renderer::end_frame()
 {
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	m_d3d->endScene(m_vsync);
 }
 
-void dx11::DX11_Renderer::clear_display()
+void dx11::DX11Renderer::clear_display()
 {
 	auto context = m_d3d->getDeviceContext();
 	float color[4] = { 0.39f, 0.58f, 0.92f, 1.0f };
@@ -88,27 +88,27 @@ void dx11::DX11_Renderer::clear_display()
 	context->ClearDepthStencilView(m_d3d->DepthTargetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void dx11::DX11_Renderer::set_wireframe(bool b)
+void dx11::DX11Renderer::set_wireframe(bool b)
 {
 	m_d3d->setWireframeMode(b);
 }
 
-bool dx11::DX11_Renderer::get_wireframe()
+bool dx11::DX11Renderer::get_wireframe()
 {
 	return m_d3d->getWireframeState();
 }
 
-void dx11::DX11_Renderer::set_vsync(bool b)
+void dx11::DX11Renderer::set_vsync(bool b)
 {
 	m_vsync = b;
 }
 
-bool dx11::DX11_Renderer::get_vsync()
+bool dx11::DX11Renderer::get_vsync()
 {
 	return m_vsync;
 }
 
-void dx11::DX11_Renderer::set_resolution(int width, int height)
+void dx11::DX11Renderer::set_resolution(int width, int height)
 {
 	// TODO @matthew - only need to reallocate the swapchan not whole of d3d
 	if (m_resolution_width != width || m_resolution_width != height)
@@ -119,9 +119,9 @@ void dx11::DX11_Renderer::set_resolution(int width, int height)
 	}
 }
 
-void dx11::DX11_Renderer::render(dx11::DX11VertexBuffer* vbuff)
+void dx11::DX11Renderer::render(dx11::DX11VertexBuffer* vbuff)
 {
-	UINT stride = sizeof(dx11::DX11VertexBuffer::DX11VertexType);
+	UINT stride = (UINT)sizeof(dx11::DX11VertexBuffer::DX11VertexType);
 	UINT offset = 0;
 
 	// Set vertex buffer stride and offset.
@@ -131,15 +131,15 @@ void dx11::DX11_Renderer::render(dx11::DX11VertexBuffer* vbuff)
 	m_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_sampleState);
 
-	m_shader->run(m_d3d->getDeviceContext(), vbuff->IndexCount());
+	m_shader->run(m_d3d->getDeviceContext(), (UINT)vbuff->IndexCount());
 }
 
-void dx11::DX11_Renderer::set_shader(DX11Shader* shader)
+void dx11::DX11Renderer::set_shader(DX11Shader* shader)
 {
 	m_shader = shader;
 }
 
-glm::mat4x4 dx11::DX11_Renderer::getProjectionMatrix(float fov_deg)
+glm::mat4x4 dx11::DX11Renderer::getProjectionMatrix(float fov_deg)
 {
 	DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fov_deg * 0.0174533f, (float)m_resolution_width / (float)m_resolution_height, m_near_plane, m_far_plane);
 
@@ -152,18 +152,18 @@ glm::mat4x4 dx11::DX11_Renderer::getProjectionMatrix(float fov_deg)
 	return proj;
 }
 
-void dx11::DX11_Renderer::setTargetBackBuffer()
+void dx11::DX11Renderer::setTargetBackBuffer()
 {
 	m_d3d->setBackBufferRenderTarget();
 	m_d3d->resetViewport();
 }
 
-void dx11::DX11_Renderer::setTexture(graphics::Texture* texture, int slot)
+void dx11::DX11Renderer::setTexture(graphics::Texture* texture, int slot)
 {
 	m_d3d->getDeviceContext()->PSSetShaderResources(slot, 1, &texture->dx11_texture);
 }
 
-void dx11::DX11_Renderer::send_data(const dx11::ShaderData* data)
+void dx11::DX11Renderer::send_data(const dx11::ShaderData* data)
 {
 	if (!m_shader)
 		return;
@@ -263,7 +263,7 @@ void dx11::DX11_Renderer::send_data(const dx11::ShaderData* data)
 	}
 }
 
-void dx11::DX11_Renderer::realloc_d3d()
+void dx11::DX11Renderer::realloc_d3d()
 {
 	ImGui_ImplDX11_Shutdown();
 	release_sampler();
@@ -276,7 +276,7 @@ void dx11::DX11_Renderer::realloc_d3d()
 	ImGui_ImplDX11_Init(m_d3d->getDevice(), m_d3d->getDeviceContext());
 }
 
-void dx11::DX11_Renderer::init_sampler()
+void dx11::DX11Renderer::init_sampler()
 {
 	{
 		D3D11_SAMPLER_DESC samplerDesc;
@@ -293,7 +293,7 @@ void dx11::DX11_Renderer::init_sampler()
 	}
 }
 
-void dx11::DX11_Renderer::release_sampler()
+void dx11::DX11Renderer::release_sampler()
 {
 	if (m_sampleState)
 	{

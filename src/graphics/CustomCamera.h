@@ -1,9 +1,12 @@
 #pragma once
-#include "core/Input.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-namespace core { class Window; };
+namespace core
+{
+	class Window;
+	class Input;
+};
 
 namespace graphics
 {
@@ -30,7 +33,7 @@ namespace graphics
 	protected:
 		glm::vec3 m_position;		///< float3 for position
 		glm::vec3 m_rotation;		///< float3 for rotation (angles)
-		
+
 		glm::vec3 m_forward;
 		glm::vec3 m_up;
 		glm::vec3 m_right;
