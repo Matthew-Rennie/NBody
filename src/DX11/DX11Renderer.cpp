@@ -32,7 +32,7 @@ bool dx11::DX11Renderer::init(core::Window* window)
 	ImGui_ImplWin32_Init(m_window->hwnd());
 	ImGui_ImplDX11_Init(m_d3d->getDevice(), m_d3d->getDeviceContext());
 
-	for (int slot = 0; slot < dx11::ShaderData::num_slots; slot++)
+	for (int slot = 0; slot < dx11::DX11ShaderData::num_slots; slot++)
 	{
 		m_VS_cbuffs[slot].initBuffer(m_d3d->getDevice());
 		m_PS_cbuffs[slot].initBuffer(m_d3d->getDevice());
@@ -163,7 +163,7 @@ void dx11::DX11Renderer::setTexture(graphics::Texture* texture, int slot)
 	m_d3d->getDeviceContext()->PSSetShaderResources(slot, 1, &texture->dx11_texture);
 }
 
-void dx11::DX11Renderer::send_data(const dx11::ShaderData* data)
+void dx11::DX11Renderer::send_data(const dx11::DX11ShaderData* data)
 {
 	if (!m_shader)
 		return;
@@ -253,7 +253,7 @@ void dx11::DX11Renderer::send_data(const dx11::ShaderData* data)
 		cbuff->setBuffer_GS(m_d3d->getDeviceContext());
 	};
 
-	for (int slot = 0; slot < dx11::ShaderData::num_slots; slot++)
+	for (int slot = 0; slot < dx11::DX11ShaderData::num_slots; slot++)
 	{
 		sendPS(slot);
 		sendVS(slot);

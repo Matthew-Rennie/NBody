@@ -31,8 +31,8 @@ namespace dx11
 
 		void init(dx11::DX11Renderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_buffer, size_t index_count);
 
-		size_t VertexCount() const { return m_vertex_count; }
-		size_t IndexCount() const { return m_index_count; }
+		size_t& VertexCount() { return m_vertex_count; }
+		size_t& IndexCount() { return m_index_count; }
 
 		ID3D11Buffer* VertexBuffer() { return m_vertexBuffer; }
 		ID3D11Buffer** pVertexBuffer() { return &m_vertexBuffer; }

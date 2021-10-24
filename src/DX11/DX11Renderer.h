@@ -21,7 +21,7 @@ namespace core
 	class BaseVertexBuffer;
 	class Window;
 	class BaseShader;
-	struct ShaderData;
+	struct DX11ShaderData;
 }
 
 namespace dx11
@@ -61,15 +61,15 @@ namespace dx11
 		D3D* get_d3d() { return m_d3d; }
 		const D3D* get_d3d() const { return m_d3d; }
 
-		void send_data(const ShaderData* data);
+		void send_data(const DX11ShaderData* data);
 
 	private:
 
-		ConstantBuffer<ShaderDataEntry::buffer_size> m_PS_cbuffs[ShaderData::num_slots] = {};
-		ConstantBuffer<ShaderDataEntry::buffer_size> m_VS_cbuffs[ShaderData::num_slots] = {};
-		ConstantBuffer<ShaderDataEntry::buffer_size> m_HS_cbuffs[ShaderData::num_slots] = {};
-		ConstantBuffer<ShaderDataEntry::buffer_size> m_DS_cbuffs[ShaderData::num_slots] = {};
-		ConstantBuffer<ShaderDataEntry::buffer_size> m_GS_cbuffs[ShaderData::num_slots] = {};
+		ConstantBuffer<DX11ShaderDataEntry::buffer_size> m_PS_cbuffs[DX11ShaderData::num_slots] = {};
+		ConstantBuffer<DX11ShaderDataEntry::buffer_size> m_VS_cbuffs[DX11ShaderData::num_slots] = {};
+		ConstantBuffer<DX11ShaderDataEntry::buffer_size> m_HS_cbuffs[DX11ShaderData::num_slots] = {};
+		ConstantBuffer<DX11ShaderDataEntry::buffer_size> m_DS_cbuffs[DX11ShaderData::num_slots] = {};
+		ConstantBuffer<DX11ShaderDataEntry::buffer_size> m_GS_cbuffs[DX11ShaderData::num_slots] = {};
 
 		void realloc_d3d();
 		D3D* m_d3d = nullptr;

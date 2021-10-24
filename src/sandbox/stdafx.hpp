@@ -22,6 +22,7 @@
 #include <utility>
 #include <cassert>
 #include <cstdlib>
+#include <string>
 
 #include <fstream>
 #include <sstream>

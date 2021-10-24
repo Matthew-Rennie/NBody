@@ -62,7 +62,7 @@ void graphics::FreeCamera::handleInput(float dt)
 		// mouse look is on
 		m_deltax = m_input->getMouseX() - (m_window->screen_width() / 2);
 		m_deltay = m_input->getMouseY() - (m_window->screen_height() / 2);
-		turn(m_deltax, m_deltay);
+		turn(-m_deltax, m_deltay);
 		m_cursor.x = m_window->screen_width() / 2;
 		m_cursor.y = m_window->screen_height() / 2;
 		ClientToScreen(m_window->hwnd(), &m_cursor);
@@ -227,7 +227,7 @@ void graphics::FreeCamera::turnDown()
 void graphics::FreeCamera::turn(int x, int y)
 {
 	// Update the rotation.
-	m_rotation.y += (float)x / (m_rot_speed / 5.0f);// m_speed * x;
+	m_rotation.y += (float)x * m_rot_speed;
 
-	m_rotation.x += (float)y / (m_rot_speed / 5.0f);// m_speed * y;
+	m_rotation.x += (float)y * m_rot_speed;
 }

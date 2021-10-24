@@ -20,13 +20,7 @@ dx11::DX11VertexBuffer::~DX11VertexBuffer()
 
 void dx11::DX11VertexBuffer::init(dx11::DX11Renderer* renderer, VertexType* vertex_buffer, size_t vertex_count, IndexType* index_bufer, size_t index_count)
 {
-	DX11Renderer* dx11_renderer = dynamic_cast<DX11Renderer*>(renderer);
-	if (!dx11_renderer)
-	{
-		throw std::runtime_error("could not conver core::BaseRenderer to dx11::DX11Renderer");
-	}
-
-	D3D* d3d = dx11_renderer->get_d3d();
+	D3D* d3d = renderer->get_d3d();
 	if (!d3d)
 	{
 		throw std::runtime_error("D3D was not initialised");

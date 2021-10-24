@@ -33,6 +33,6 @@ namespace graphics
 		int m_deltax, m_deltay;
 
 		float m_move_speed = 5.0f;
-		float m_rot_speed = 100.f;
+		float m_rot_speed = 0.02f;
 	};
 }

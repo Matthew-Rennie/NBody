@@ -4,10 +4,11 @@
 #include "core/Window.h"
 #include "graphics/TextureManager.h"
 
+#include "GravitySolverBruteForce.h"
+
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
 #include "DX11/DX11Shader.h"
-
 bool Game::Init()
 {
 	if (!BaseApplication::Init())
@@ -24,13 +25,18 @@ bool Game::Init()
 
 	m_vbuffer = new dx11::DX11VertexBuffer();
 
-	GenerateTerrainMesh(5);
+	//GenerateTerrainMesh(5);
+	GenerateCubeMesh();
 
 	camera.setInput(&m_input);
 	camera.setWindow(m_window);
 
 	m_textureManager = new graphics::TextureManager(m_renderer);
 	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
+
+	m_gSolver = new GravitySolverBruteForce();
+
+	InitObjects();
 
 	return true;
 }
@@ -45,12 +51,21 @@ bool Game::Release()
 	SAFE_DELETE(m_vbuffer);
 	SAFE_DELETE(m_window);
 	SAFE_DELETE(m_textureManager);
+	SAFE_DELETE(m_gSolver);
 
 	return true;
 }
 
 bool Game::Update(const float frame_time)
 {
+	t += frame_time;
+	if (t > 0.25f)
+	{
+		m_fps = 1.f / frame_time;
+		std::cout << "fps: " << m_fps << std::endl;
+		t = 0;
+	}
+
 	if (!BaseApplication::Update(frame_time))
 		return false;
 
@@ -59,6 +74,13 @@ bool Game::Update(const float frame_time)
 		return false;
 	}
 	camera.handleInput(frame_time);
+
+	m_gSolver->CalculateForces(m_objects);
+	for (auto& obj : m_objects)
+	{
+		obj.Update(frame_time);
+	}
+
 	return true;
 }
 
@@ -77,7 +99,7 @@ bool Game::Render()
 	};
 	static_assert(sizeof(BuffType) <= 512);
 
-	dx11::ShaderData* shader_data = new dx11::ShaderData();
+	dx11::DX11ShaderData* shader_data = new dx11::DX11ShaderData();
 	shader_data->vs_data[0].enable = true;
 
 	BuffType* bufftype = (BuffType*)shader_data->vs_data[0].buffer;
@@ -91,11 +113,18 @@ bool Game::Render()
 	m_renderer->setTargetBackBuffer();
 
 	ImGui::Text("Hello World");
-
+	ImGui::Text(std::to_string(m_fps).c_str());
 	m_renderer->set_shader(m_shader);
-	m_renderer->send_data(shader_data);
-	m_renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
-	m_renderer->render(m_vbuffer);
+
+	for (auto& obj : m_objects)
+	{
+		obj.SetVertexBuff(m_vbuffer);
+		obj.Render(m_renderer, &camera);
+	}
+
+	// m_renderer->send_data(shader_data);
+	// m_renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
+	// m_renderer->render(m_vbuffer);
 
 	m_renderer->end_frame();
 
@@ -202,4 +231,549 @@ void Game::GenerateTerrainMesh(int resolution)
 
 	delete[] vertex_buff;
 	delete[] index_buff;
+}
+
+void Game::GenerateCubeMesh()
+{
+	ID3D11Buffer* vertexBuffer, * indexBuffer;
+
+	int vertexCount;
+	int indexCount;
+	int resolution = 1;
+
+	VertexType* vertices;
+	unsigned long* indices;
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
+
+	// 6 vertices per quad, res*res is face, times 6 for each face
+	vertexCount = ((6 * resolution) * resolution) * 6;
+
+	indexCount = vertexCount;
+
+	// Create the vertex and index array.
+	vertices = new VertexType[vertexCount];
+	indices = new unsigned long[indexCount];
+
+	// Vertex variables
+	float yincrement = 2.0f / resolution;
+	float xincrement = 2.0f / resolution;
+	float ystart = 1.0f;
+	float xstart = -1.0f;
+	//UV variables
+	float txu = 0.0f;
+	float txv = 0.0f;
+	float txuinc = 1.0f / resolution;	// UV increment
+	float txvinc = 1.0f / resolution;
+	//Counters
+	int v = 0;	// vertex counter
+	int i = 0;	// index counter
+
+	//front face
+
+	for (int y = 0; y < resolution; y++)	// for each quad in the y direction
+	{
+		for (int x = 0; x < resolution; x++)	// for each quad in the x direction
+		{
+			// Load the vertex array with data.
+			//0
+			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, -1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(xstart + xincrement, ystart, -1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart, ystart, -1.0f);  // Top left.	-1.0, 1.0
+			vertices[v].texture = XMFLOAT2(txu, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//0
+			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, -1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//3
+			vertices[v].position = XMFLOAT3(xstart + xincrement, ystart - yincrement, -1.0f);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(xstart + xincrement, ystart, -1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			// increment
+			xstart += xincrement;
+			txu += txuinc;
+			//ystart -= yincrement;
+		}
+
+		ystart -= yincrement;
+		xstart = -1;
+
+		txu = 0;
+		txv += txvinc;
+	}
+
+	txv = 0;
+
+	//back face
+	ystart = 1;
+	xstart = 1;
+	for (int y = 0; y < resolution; y++)	// for each quad in the y direction
+	{
+		for (int x = 0; x < resolution; x++)	// for each quad in the x direction
+		{
+			// Load the vertex array with data.
+			//0
+			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, 1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart - xincrement, ystart, 1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(xstart, ystart, 1.0f);  // Top left.	-1.0, 1.0
+			vertices[v].texture = XMFLOAT2(txu, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//0
+			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, 1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//3
+			vertices[v].position = XMFLOAT3(xstart - xincrement, ystart - yincrement, 1.0f);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart - xincrement, ystart, 1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			// increment
+			xstart -= xincrement;
+			//ystart -= yincrement;
+			txu += txuinc;
+		}
+
+		ystart -= yincrement;
+		xstart = 1;
+
+		txu = 0;
+		txv += txvinc;
+	}
+
+	txv = 0;
+
+	//right face
+	ystart = 1;
+	xstart = -1;
+	for (int y = 0; y < resolution; y++)	// for each quad in the y direction
+	{
+		for (int x = 0; x < resolution; x++)	// for each quad in the x direction
+		{
+			// Load the vertex array with data.
+			//0
+			vertices[v].position = XMFLOAT3(1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(1.0f, ystart, xstart + xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(1.0f, ystart, xstart);  // Top left.	-1.0, 1.0
+			vertices[v].texture = XMFLOAT2(txu, txv);
+			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//0
+			vertices[v].position = XMFLOAT3(1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//3
+			vertices[v].position = XMFLOAT3(1.0f, ystart - yincrement, xstart + xincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(1.0f, ystart, xstart + xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			// increment
+			xstart += xincrement;
+			//ystart -= yincrement;
+			txu += txuinc;
+		}
+
+		ystart -= yincrement;
+		xstart = -1;
+		txu = 0;
+		txv += txvinc;
+	}
+
+	txv = 0;
+
+	//left face
+	ystart = 1;
+	xstart = 1;
+	for (int y = 0; y < resolution; y++)	// for each quad in the y direction
+	{
+		for (int x = 0; x < resolution; x++)	// for each quad in the x direction
+		{
+			// Load the vertex array with data.
+			//0
+			vertices[v].position = XMFLOAT3(-1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(-1.0f, ystart, xstart - xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(-1.0f, ystart, xstart);  // Top left.	-1.0, 1.0
+			vertices[v].texture = XMFLOAT2(txu, txv);
+			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//0
+			vertices[v].position = XMFLOAT3(-1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//3
+			vertices[v].position = XMFLOAT3(-1.0f, ystart - yincrement, xstart - xincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(-1.0f, ystart, xstart - xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			// increment
+			xstart -= xincrement;
+			//ystart -= yincrement;
+			txu += txuinc;
+		}
+
+		ystart -= yincrement;
+		xstart = 1;
+		txu = 0;
+		txv += txvinc;
+	}
+
+	txv = 0;
+
+	//top face
+	ystart = 1;
+	xstart = -1;
+
+	for (int y = 0; y < resolution; y++)	// for each quad in the y direction
+	{
+		for (int x = 0; x < resolution; x++)	// for each quad in the x direction
+		{
+			// Load the vertex array with data.
+			//0
+			vertices[v].position = XMFLOAT3(xstart, 1.0f, ystart - yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart + xincrement, 1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(xstart, 1.0f, ystart);  // Top left.	-1.0, 1.0
+			vertices[v].texture = XMFLOAT2(txu, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//0
+			vertices[v].position = XMFLOAT3(xstart, 1.0f, ystart - yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//3
+			vertices[v].position = XMFLOAT3(xstart + xincrement, 1.0f, ystart - yincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart + xincrement, 1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			// increment
+			xstart += xincrement;
+			//ystart -= yincrement;
+			txu += txuinc;
+		}
+
+		ystart -= yincrement;
+		xstart = -1;
+		txu = 0;
+		txv += txvinc;
+	}
+
+	txv = 0;
+
+	//bottom face
+	ystart = -1;
+	xstart = -1;
+
+	for (int y = 0; y < resolution; y++)	// for each quad in the y direction
+	{
+		for (int x = 0; x < resolution; x++)	// for each quad in the x direction
+		{
+			// Load the vertex array with data.
+			//0
+			vertices[v].position = XMFLOAT3(xstart, -1.0f, ystart + yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart + xincrement, -1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//1
+			vertices[v].position = XMFLOAT3(xstart, -1.0f, ystart);  // Top left.	-1.0, 1.0
+			vertices[v].texture = XMFLOAT2(txu, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//0
+			vertices[v].position = XMFLOAT3(xstart, -1.0f, ystart + yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//3
+			vertices[v].position = XMFLOAT3(xstart + xincrement, -1.0f, ystart + yincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			//2
+			vertices[v].position = XMFLOAT3(xstart + xincrement, -1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+			indices[i] = i;
+			v++;
+			i++;
+
+			// increment
+			xstart += xincrement;
+			//ystart -= yincrement;
+			txu += txuinc;
+		}
+
+		ystart += yincrement;
+		xstart = -1;
+		txu = 0;
+		txv += txvinc;
+	}
+
+	// Set up the description of the static vertex buffer.
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = sizeof(VertexType) * vertexCount;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.StructureByteStride = 0;
+	// Give the subresource structure a pointer to the vertex data.
+	vertexData.pSysMem = vertices;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+	// Now create the vertex buffer.
+	m_renderer->get_d3d()->getDevice()->CreateBuffer(&vertexBufferDesc, &vertexData, &vertexBuffer);
+
+	// Set up the description of the static index buffer.
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * indexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+	// Give the subresource structure a pointer to the index data.
+	indexData.pSysMem = indices;
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+	// Create the index buffer.
+	m_renderer->get_d3d()->getDevice()->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
+
+	// Release the arrays now that the vertex and index buffers have been created and loaded.
+	delete[] vertices;
+	vertices = 0;
+
+	delete[] indices;
+	indices = 0;
+
+	*m_vbuffer->pVertexBuffer() = vertexBuffer;
+	*m_vbuffer->pIndexBuffer() = indexBuffer;
+	m_vbuffer->VertexCount() = vertexCount;
+	m_vbuffer->IndexCount() = indexCount;
+}
+
+void Game::InitObjects()
+{
+	int count = 10;
+	for (int i = 0; i < count; i++)
+	{
+		m_objects.emplace_back(m_textureManager);
+		m_objects[i].SetPosition({ i,i,10 });
+		m_objects[i].SetMass(1.f);
+	}
 }
