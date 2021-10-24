@@ -136,8 +136,8 @@ void dx11::D3D::createDepthBuffer()
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	// Initialize the description of the depth buffer.
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-	depthBufferDesc.Width = 0;
-	depthBufferDesc.Height = 0;
+	depthBufferDesc.Width = screenwidth;
+	depthBufferDesc.Height = screenheight;
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
