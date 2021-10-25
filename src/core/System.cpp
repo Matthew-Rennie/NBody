@@ -35,14 +35,17 @@ void core::System::Run(BaseApplication* app)
 				done = true;
 				break;
 			}
-			result = app->Render();
-			if (!result)
-			{
-				done = true;
-				break;
-			}
 
-			//}
+			// allows app to disable rendering for a frame
+			if (app->ReadyForRender())
+			{
+				result = app->Render();
+				if (!result)
+				{
+					done = true;
+					break;
+				}
+			}
 		}
 	}
 

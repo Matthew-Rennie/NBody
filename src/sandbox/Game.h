@@ -30,10 +30,17 @@ public:
 	bool Update(const double frame_time) override;
 	bool Render() override;
 
+	bool ReadyForRender() override;
+
 protected:
 
 	double m_fps = 0.f;
-	double t = 0.f;
+	double m_guiUpdateClock = 0.f;
+	double m_guiUpdateRate = 0.25f;
+
+	double m_frameClock = 0.0;
+	int m_targetFrameRate = 60;
+	bool m_enableRendering = true;
 
 	double EnergyK = 0.f;
 	double EnergyP = 0.f;
@@ -54,12 +61,13 @@ protected:
 
 	void InitWindow();
 
-	void GenerateTerrainMesh(int resolution);
 	void GenerateCubeMesh();
 	void InitObjects();
 
 	double SystemKineticEnergy();
 	double SystemPotentialEnergy();
+
+	void RenderGUI();
 
 	graphics::FreeCamera camera;
 	graphics::TextureManager* m_textureManager;
@@ -67,5 +75,5 @@ protected:
 	std::vector<Object3d> m_objects;
 	GravitySolverBase* m_gSolver;
 
-	const double m_timestep = 0.001f;
+	const double m_timestep = 0.0001f;
 };

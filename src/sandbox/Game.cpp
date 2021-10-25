@@ -59,12 +59,13 @@ bool Game::Release()
 
 bool Game::Update(const double frame_time)
 {
-	t += frame_time;
-	if (t > 0.25f)
+	m_frameClock += frame_time;
+	m_guiUpdateClock += frame_time;
+	if (m_guiUpdateClock > m_guiUpdateRate)
 	{
 		m_fps = 1.f / frame_time;
 		std::cout << "fps: " << m_fps << std::endl;
-		t = 0;
+		m_guiUpdateClock = 0;
 
 		EnergyP = SystemPotentialEnergy();
 		EnergyK = SystemKineticEnergy();
@@ -91,6 +92,8 @@ bool Game::Update(const double frame_time)
 
 bool Game::Render()
 {
+	m_frameClock = 0.0;
+
 	if (!BaseApplication::Render())
 		return false;
 
@@ -104,56 +107,36 @@ bool Game::Render()
 	};
 	static_assert(sizeof(BuffType) <= 512);
 
-	dx11::DX11ShaderData* shader_data = new dx11::DX11ShaderData();
-	shader_data->vs_data[0].enable = true;
-
-	BuffType* bufftype = (BuffType*)shader_data->vs_data[0].buffer;
-	bufftype->world = glm::transpose(glm::mat4x4(1.0f));
-	bufftype->view = glm::transpose(camera.getViewMatrix());
-	bufftype->projection = glm::transpose(m_renderer->getProjectionMatrix(45));
-
-	memcpy(shader_data->vs_data[0].buffer, bufftype, sizeof(BuffType));
-
 	m_renderer->begin_frame();
 	m_renderer->setTargetBackBuffer();
 
-	ImGui::Text("steps per second: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(m_fps).c_str());
+	RenderGUI();
 
-	ImGui::Text("object count: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(m_objects.size()).c_str());
-
-	ImGui::Text("Potential Energy: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(EnergyP).c_str());
-
-	ImGui::Text("Kinetic Energy: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(EnergyK).c_str());
-
-	ImGui::Text("Total Energy: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(EnergyTotal).c_str());
-
-	m_renderer->set_shader(m_shader);
-
-	for (auto& obj : m_objects)
+	if (m_enableRendering)
 	{
-		obj.SetVertexBuff(m_vbuffer);
-		obj.Render(m_renderer, &camera);
+		m_renderer->set_shader(m_shader);
+		for (auto& obj : m_objects)
+		{
+			obj.SetVertexBuff(m_vbuffer);
+			obj.Render(m_renderer, &camera);
+		}
 	}
-
-	// m_renderer->send_data(shader_data);
-	// m_renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
-	// m_renderer->render(m_vbuffer);
 
 	m_renderer->end_frame();
 
-	//delete bufftype;
-	delete shader_data;
 	return true;
+}
+
+bool Game::ReadyForRender()
+{
+	if (BaseApplication::ReadyForRender())
+	{
+		double t = 1.0 / (double)m_targetFrameRate;
+		if (m_frameClock > t)
+			return true;
+	}
+
+	return false;
 }
 
 void Game::InitWindow()
@@ -163,97 +146,6 @@ void Game::InitWindow()
 	config.width = 0;
 	config.height = 0;
 	m_window = new core::Window(&m_input, config);
-}
-
-void Game::GenerateTerrainMesh(int resolution)
-{
-	size_t index_count = resolution * resolution * 6;
-	size_t vertex_count = (resolution + 1) * (resolution + 1);
-	dx11::VertexType* vertex_buff = new dx11::VertexType[vertex_count];
-	dx11::IndexType* index_buff = new dx11::IndexType[index_count];
-
-	int index;
-	float positionX, positionZ, u, v, increment;
-
-	// Calculate the number of vertices in the terrain mesh.
-	vertex_count = (resolution + 1) * (resolution + 1);
-
-	//indexCount = vertexCount;
-	index_count = resolution * resolution * 6;
-
-	// UV coords.
-	u = 0;
-	v = 0;
-	increment = 10 / (float)resolution;
-	int v_resolution = resolution + 1;
-
-	// create the vertex array
-	for (int i = 0; i < v_resolution; i++)
-	{
-		for (int j = 0; j < v_resolution; j++)
-		{
-			// build vertex
-			positionX = ((float)j * increment) - ((float)10 / 2);
-			positionZ = ((float)i * increment) - ((float)10 / 2);
-
-			vertex_buff[(v_resolution * i) + j].position[0] = positionX;
-			vertex_buff[(v_resolution * i) + j].position[1] = 0.0f;
-			vertex_buff[(v_resolution * i) + j].position[2] = positionZ;
-
-			vertex_buff[(v_resolution * i) + j].texture[0] = (float)i / ((float)resolution / 64.0f);
-			vertex_buff[(v_resolution * i) + j].texture[1] = (float)j / ((float)resolution / 64.0f);
-
-			vertex_buff[(v_resolution * i) + j].normal[0] = 0.0;
-			vertex_buff[(v_resolution * i) + j].normal[1] = 1.0;
-			vertex_buff[(v_resolution * i) + j].normal[2] = 0.0;
-		}
-	}
-
-	index = 0;
-
-	// create the index array
-	int balancer = resolution % 2;
-	for (int i = 0; i < resolution; i++)
-	{
-		for (int j = 0; j < resolution; j++)
-		{
-			int k = ((resolution * i) + j) + (resolution % 2);
-
-			if (balancer == 0)
-				if (i % 2 == 1)
-					k += 1;
-
-			int quad_index = ((v_resolution * i) + j);
-
-			if (k % 2 == 0)
-			{
-				index_buff[index] = quad_index + v_resolution;
-				index_buff[index + 1] = quad_index;
-				index_buff[index + 2] = quad_index + 1;
-
-				index_buff[index + 3] = quad_index + v_resolution;
-				index_buff[index + 4] = quad_index + 1;
-				index_buff[index + 5] = quad_index + v_resolution + 1;
-			}
-			else // k%2 == 1
-			{
-				index_buff[index] = quad_index + v_resolution;
-				index_buff[index + 1] = quad_index;
-				index_buff[index + 2] = quad_index + v_resolution + 1;
-
-				index_buff[index + 3] = quad_index + v_resolution + 1;
-				index_buff[index + 4] = quad_index;
-				index_buff[index + 5] = quad_index + 1;
-			}
-
-			index += 6;
-		}
-	}
-
-	m_vbuffer->init(m_renderer, vertex_buff, vertex_count, index_buff, index_count);
-
-	delete[] vertex_buff;
-	delete[] index_buff;
 }
 
 void Game::GenerateCubeMesh()
@@ -792,30 +684,32 @@ void Game::GenerateCubeMesh()
 
 void Game::InitObjects()
 {
-	int count_x = 2;
+	int count_x = 10;
 	int count_y = 1;
-	int count_z = 1;
+	int count_z = 10;
 
-	//for (int x = 0; x < count_x; x++)
-	//{
-	//	for (int y = 0; y < count_y; y++)
-	//	{
-	//		for (int z = 0; z < count_z; z++)
-	//		{
-	//			m_objects.emplace_back(m_textureManager);
-	//			m_objects[m_objects.size() - 1].SetPosition({ x,y,z });
-	//			m_objects[m_objects.size() - 1].SetMass(1.f);
-	//		}
-	//	}
-	//}
+	for (int x = 0; x < count_x; x++)
+	{
+		for (int y = 0; y < count_y; y++)
+		{
+			for (int z = 0; z < count_z; z++)
+			{
+				m_objects.emplace_back(m_textureManager);
+				m_objects[m_objects.size() - 1].SetPosition({ x,y,z });
+				m_objects[m_objects.size() - 1].SetMass(1.f);
+			}
+		}
+	}
 
-	m_objects.emplace_back(m_textureManager);
-	m_objects.emplace_back(m_textureManager);
+	long double ld = 0.0l;
 
-	m_objects[0].SetPosition({ 1,0,0 });
-	m_objects[1].SetPosition({ -1,0,0 });
-	m_objects[0].SetMass(1.f);
-	m_objects[1].SetMass(1.f);
+	// m_objects.emplace_back(m_textureManager);
+	// m_objects.emplace_back(m_textureManager);
+	//
+	// m_objects[0].SetPosition({ 1,0,0 });
+	// m_objects[1].SetPosition({ -1,0,0 });
+	// m_objects[0].SetMass(1.f);
+	// m_objects[1].SetMass(1.f);
 }
 
 double Game::SystemKineticEnergy()
@@ -840,4 +734,40 @@ double Game::SystemPotentialEnergy()
 	}
 
 	return e;
+}
+
+void Game::RenderGUI()
+{
+	if (ImGui::TreeNode("Debug Options"))
+	{
+		ImGui::Checkbox("Enable Rendering", &m_enableRendering);
+		ImGui::InputInt("Target Frame Rate", &m_targetFrameRate);
+		ImGui::InputDouble("GUI Refresh Rate", &m_guiUpdateRate);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Spacing();
+
+	ImGui::Text("steps per second: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(m_fps).c_str());
+
+	ImGui::Text("object count: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(m_objects.size()).c_str());
+
+	ImGui::Spacing();
+
+	ImGui::Text("Potential Energy: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(EnergyP).c_str());
+
+	ImGui::Text("Kinetic Energy: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(EnergyK).c_str());
+
+	ImGui::Text("Total Energy: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(EnergyTotal).c_str());
 }
