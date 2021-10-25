@@ -8,16 +8,17 @@
 #include "glm/glm.hpp"
 #include "graphics/CustomCamera.h"
 #include "glm/fwd.hpp"
-void Object3d::Update(const float dt)
+void Object3d::Update(const double dt)
 {
-	glm::vec3 acceleration = glm::vec3(0.f);
+	glm::dvec3 acceleration = glm::dvec3(0.f);
 
 	for (auto& force : m_forces)
 	{
-		acceleration += force.dir * force.mag / Mass();
+		acceleration += force.dir * force.mag;
 	}
 	m_forces.clear();
 
+	acceleration /= Mass();
 	acceleration *= dt;
 
 	m_position += m_velocity * dt;
@@ -39,9 +40,10 @@ void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* came
 
 	BuffType* bufftype = (BuffType*)shaderData.vs_data[0].buffer;
 
-	glm::mat4 w = glm::translate(glm::mat4x4(1.f), m_position);
+	glm::dmat4x4 w = glm::translate(glm::dmat4x4(1.f), m_position);
+	w = glm::scale(w, glm::dvec3(0.1, 0.1, 0.1));
 
-	bufftype->world = glm::transpose(w);
+	bufftype->world = (glm::mat4x4)glm::transpose(w);
 	bufftype->view = glm::transpose(camera->getViewMatrix());
 	bufftype->projection = glm::transpose(renderer->getProjectionMatrix(45));
 
@@ -55,14 +57,14 @@ void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* came
 	}
 }
 
-float Object3d::KineticEnergy() const
+double Object3d::KineticEnergy() const
 {
 	return 0.5f * Mass() * glm::length(Velocity()) * glm::length(Velocity());
 }
 
-float Object3d::PotentialEnergy(const Object3d& other, float Gconstant) const
+double Object3d::PotentialEnergy(const Object3d& other, double Gconstant) const
 {
-	float r = glm::length(Position() - other.Position());
+	double r = glm::length(Position() - other.Position());
 
 	return -(Mass() * other.Mass() * Gconstant) / r;
 }

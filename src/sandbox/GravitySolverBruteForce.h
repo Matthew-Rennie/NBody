@@ -11,6 +11,6 @@ public:
 
 private:
 
-	float CalcForce(const Object3d& first, const Object3d& second) const;
-	glm::vec3 CalcDirection(const Object3d& first, const Object3d& second) const;
+	double CalcForce(const Object3d& first, const Object3d& second) const;
+	glm::dvec3 CalcDirection(const Object3d& first, const Object3d& second) const;
 };

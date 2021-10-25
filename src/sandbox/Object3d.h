@@ -25,32 +25,32 @@ public:
 		m_textureManager = texManager;
 	}
 
-	void Update(const float dt);
+	void Update(const double dt);
 	void Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* camera);
 
-	float Mass() const { return m_mass; }
-	glm::vec3 Position() const { return m_position; }
-	glm::vec3 Velocity() const { return m_velocity; }
+	double Mass() const { return m_mass; }
+	glm::dvec3 Position() const { return m_position; }
+	glm::dvec3 Velocity() const { return m_velocity; }
 
-	void SetMass(const float mass) { m_mass = mass; }
-	void SetPosition(const glm::vec3 pos) { m_position = pos; }
-	void SetVelocity(const glm::vec3 vel) { m_velocity = vel; }
+	void SetMass(const double mass) { m_mass = mass; }
+	void SetPosition(const glm::dvec3 pos) { m_position = pos; }
+	void SetVelocity(const glm::dvec3 vel) { m_velocity = vel; }
 
 	void ApplyForce(const Force force) { m_forces.push_back(force); }
-	void ApplyForce(const glm::vec3 dir, const float mag) { m_forces.emplace_back(dir, mag); }
+	void ApplyForce(const glm::dvec3 dir, const double mag) { m_forces.emplace_back(dir, mag); }
 
 	void SetVertexBuff(dx11::DX11VertexBuffer* vbuff) { m_vbuffer = vbuff; }
 
-	float KineticEnergy() const;
-	float PotentialEnergy(const Object3d& other, float Gconstant) const;
+	double KineticEnergy() const;
+	double PotentialEnergy(const Object3d& other, double Gconstant) const;
 
 protected:
 
 	std::vector<Force> m_forces;
 
-	float m_mass = 0.f;
-	glm::vec3 m_position = glm::vec3(0.f);
-	glm::vec3 m_velocity = glm::vec3(0.f);
+	double m_mass = 0.f;
+	glm::dvec3 m_position = glm::dvec3(0.f);
+	glm::dvec3 m_velocity = glm::dvec3(0.f);
 
 	graphics::TextureManager* m_textureManager = nullptr;
 	dx11::DX11VertexBuffer* m_vbuffer = nullptr;

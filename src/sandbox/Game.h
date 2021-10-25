@@ -27,17 +27,17 @@ class Game : public core::BaseApplication
 public:
 	bool Init() override;
 	bool Release() override;
-	bool Update(const float frame_time) override;
+	bool Update(const double frame_time) override;
 	bool Render() override;
 
 protected:
 
-	float m_fps = 0.f;
-	float t = 0.f;
+	double m_fps = 0.f;
+	double t = 0.f;
 
-	float EnergyK = 0.f;
-	float EnergyP = 0.f;
-	float EnergyTotal = 0.f;
+	double EnergyK = 0.f;
+	double EnergyP = 0.f;
+	double EnergyTotal = 0.f;
 
 	struct VertexType
 	{
@@ -58,8 +58,8 @@ protected:
 	void GenerateCubeMesh();
 	void InitObjects();
 
-	float SystemKineticEnergy();
-	float SystemPotentialEnergy();
+	double SystemKineticEnergy();
+	double SystemPotentialEnergy();
 
 	graphics::FreeCamera camera;
 	graphics::TextureManager* m_textureManager;
@@ -67,5 +67,5 @@ protected:
 	std::vector<Object3d> m_objects;
 	GravitySolverBase* m_gSolver;
 
-	const float m_timestep = 0.01f;
+	const double m_timestep = 0.001f;
 };

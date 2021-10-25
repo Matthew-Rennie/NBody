@@ -3,12 +3,12 @@
 
 struct Force
 {
-	Force(const glm::vec3& d, const float& m)
+	Force(const glm::dvec3& d, const double& m)
 	{
 		dir = d;
 		mag = m;
 	}
 
-	glm::vec3 dir;
-	float mag = 0.f;
+	glm::dvec3 dir;
+	double mag = 0.f;
 };

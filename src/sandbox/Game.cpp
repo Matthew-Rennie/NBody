@@ -18,7 +18,7 @@ bool Game::Init()
 
 	m_renderer = new dx11::DX11Renderer(&m_input);
 	m_renderer->init(m_window);
-	m_renderer->set_vsync(true);
+	// m_renderer->set_vsync(true);
 
 	m_shader = new dx11::DX11Shader(m_renderer);
 	m_shader->load_VS(L"shader_vs.cso");
@@ -57,7 +57,7 @@ bool Game::Release()
 	return true;
 }
 
-bool Game::Update(const float frame_time)
+bool Game::Update(const double frame_time)
 {
 	t += frame_time;
 	if (t > 0.25f)
@@ -78,7 +78,7 @@ bool Game::Update(const float frame_time)
 	{
 		return false;
 	}
-	camera.handleInput(frame_time);
+	camera.handleInput((float)frame_time);
 
 	m_gSolver->CalculateForces(m_objects);
 	for (auto& obj : m_objects)
@@ -818,9 +818,9 @@ void Game::InitObjects()
 	m_objects[1].SetMass(1.f);
 }
 
-float Game::SystemKineticEnergy()
+double Game::SystemKineticEnergy()
 {
-	float e = 0.f;
+	double e = 0.f;
 	for (const auto& obj : m_objects)
 	{
 		e += obj.KineticEnergy();
@@ -828,9 +828,9 @@ float Game::SystemKineticEnergy()
 	return e / m_timestep;
 }
 
-float Game::SystemPotentialEnergy()
+double Game::SystemPotentialEnergy()
 {
-	float e = 0.f;
+	double e = 0.f;
 	for (int i = 0; i < m_objects.size(); i++)
 	{
 		for (int j = i + 1; j < m_objects.size(); j++)

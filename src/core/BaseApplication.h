@@ -12,7 +12,7 @@ namespace core
 
 		virtual bool Init() { return true; };
 		virtual bool Release() { return true; }
-		virtual bool Update(const float frame_time) { return true; };
+		virtual bool Update(const double frame_time) { return true; };
 		virtual bool Render() { return true; };
 
 	protected:
