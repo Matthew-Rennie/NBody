@@ -41,7 +41,6 @@ glm::vec3 GravitySolverBruteForce::CalcDirection(const Object3d& first, const Ob
 {
 	glm::vec3 diff = second.Position() - first.Position();
 	float r = glm::length(diff);
-
 	diff = diff / r;
 	return diff;
 }

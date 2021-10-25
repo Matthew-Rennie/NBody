@@ -41,6 +41,9 @@ public:
 
 	void SetVertexBuff(dx11::DX11VertexBuffer* vbuff) { m_vbuffer = vbuff; }
 
+	float KineticEnergy() const;
+	float PotentialEnergy(const Object3d& other, float Gconstant) const;
+
 protected:
 
 	std::vector<Force> m_forces;

@@ -14,7 +14,7 @@ void Object3d::Update(const float dt)
 
 	for (auto& force : m_forces)
 	{
-		acceleration += force.dir * force.mag;
+		acceleration += force.dir * force.mag / Mass();
 	}
 	m_forces.clear();
 
@@ -53,4 +53,16 @@ void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* came
 		renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
 		renderer->render(m_vbuffer);
 	}
+}
+
+float Object3d::KineticEnergy() const
+{
+	return 0.5f * Mass() * glm::length(Velocity()) * glm::length(Velocity());
+}
+
+float Object3d::PotentialEnergy(const Object3d& other, float Gconstant) const
+{
+	float r = glm::length(Position() - other.Position());
+
+	return -(Mass() * other.Mass() * Gconstant) / r;
 }

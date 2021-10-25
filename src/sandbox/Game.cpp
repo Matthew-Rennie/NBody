@@ -18,6 +18,7 @@ bool Game::Init()
 
 	m_renderer = new dx11::DX11Renderer(&m_input);
 	m_renderer->init(m_window);
+	m_renderer->set_vsync(true);
 
 	m_shader = new dx11::DX11Shader(m_renderer);
 	m_shader->load_VS(L"shader_vs.cso");
@@ -64,6 +65,10 @@ bool Game::Update(const float frame_time)
 		m_fps = 1.f / frame_time;
 		std::cout << "fps: " << m_fps << std::endl;
 		t = 0;
+
+		EnergyP = SystemPotentialEnergy();
+		EnergyK = SystemKineticEnergy();
+		EnergyTotal = EnergyK + EnergyP;
 	}
 
 	if (!BaseApplication::Update(frame_time))
@@ -78,7 +83,7 @@ bool Game::Update(const float frame_time)
 	m_gSolver->CalculateForces(m_objects);
 	for (auto& obj : m_objects)
 	{
-		obj.Update(frame_time);
+		obj.Update(m_timestep);
 	}
 
 	return true;
@@ -112,8 +117,26 @@ bool Game::Render()
 	m_renderer->begin_frame();
 	m_renderer->setTargetBackBuffer();
 
-	ImGui::Text("Hello World");
+	ImGui::Text("steps per second: ");
+	ImGui::SameLine();
 	ImGui::Text(std::to_string(m_fps).c_str());
+
+	ImGui::Text("object count: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(m_objects.size()).c_str());
+
+	ImGui::Text("Potential Energy: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(EnergyP).c_str());
+
+	ImGui::Text("Kinetic Energy: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(EnergyK).c_str());
+
+	ImGui::Text("Total Energy: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(EnergyTotal).c_str());
+
 	m_renderer->set_shader(m_shader);
 
 	for (auto& obj : m_objects)
@@ -769,11 +792,52 @@ void Game::GenerateCubeMesh()
 
 void Game::InitObjects()
 {
-	int count = 10;
-	for (int i = 0; i < count; i++)
+	int count_x = 2;
+	int count_y = 1;
+	int count_z = 1;
+
+	//for (int x = 0; x < count_x; x++)
+	//{
+	//	for (int y = 0; y < count_y; y++)
+	//	{
+	//		for (int z = 0; z < count_z; z++)
+	//		{
+	//			m_objects.emplace_back(m_textureManager);
+	//			m_objects[m_objects.size() - 1].SetPosition({ x,y,z });
+	//			m_objects[m_objects.size() - 1].SetMass(1.f);
+	//		}
+	//	}
+	//}
+
+	m_objects.emplace_back(m_textureManager);
+	m_objects.emplace_back(m_textureManager);
+
+	m_objects[0].SetPosition({ 1,0,0 });
+	m_objects[1].SetPosition({ -1,0,0 });
+	m_objects[0].SetMass(1.f);
+	m_objects[1].SetMass(1.f);
+}
+
+float Game::SystemKineticEnergy()
+{
+	float e = 0.f;
+	for (const auto& obj : m_objects)
 	{
-		m_objects.emplace_back(m_textureManager);
-		m_objects[i].SetPosition({ i,i,10 });
-		m_objects[i].SetMass(1.f);
+		e += obj.KineticEnergy();
 	}
+	return e / m_timestep;
+}
+
+float Game::SystemPotentialEnergy()
+{
+	float e = 0.f;
+	for (int i = 0; i < m_objects.size(); i++)
+	{
+		for (int j = i + 1; j < m_objects.size(); j++)
+		{
+			e += m_objects[i].PotentialEnergy(m_objects[j], 1);
+		}
+	}
+
+	return e;
 }

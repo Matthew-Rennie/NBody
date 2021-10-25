@@ -35,6 +35,10 @@ protected:
 	float m_fps = 0.f;
 	float t = 0.f;
 
+	float EnergyK = 0.f;
+	float EnergyP = 0.f;
+	float EnergyTotal = 0.f;
+
 	struct VertexType
 	{
 		XMFLOAT3 position;
@@ -54,9 +58,14 @@ protected:
 	void GenerateCubeMesh();
 	void InitObjects();
 
+	float SystemKineticEnergy();
+	float SystemPotentialEnergy();
+
 	graphics::FreeCamera camera;
 	graphics::TextureManager* m_textureManager;
 
 	std::vector<Object3d> m_objects;
 	GravitySolverBase* m_gSolver;
+
+	const float m_timestep = 0.01f;
 };
