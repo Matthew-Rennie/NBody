@@ -1,14 +1,15 @@
 #pragma once
 #include "glm/vec3.hpp"
+#include "ttvec3.h"
 
 struct Force
 {
-	Force(const glm::dvec3& d, const double& m)
+	Force(const ttvec3& d, const ttvec3::BigFloat& m)
 	{
 		dir = d;
 		mag = m;
 	}
 
-	glm::dvec3 dir;
-	double mag = 0.f;
+	ttvec3 dir;
+	ttvec3::BigFloat mag = 0.0;
 };

@@ -9,6 +9,8 @@
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
 #include "DX11/DX11Shader.h"
+#include "ttvec3.h"
+
 bool Game::Init()
 {
 	if (!BaseApplication::Init())
@@ -64,7 +66,6 @@ bool Game::Update(const double frame_time)
 	if (m_guiUpdateClock > m_guiUpdateRate)
 	{
 		m_fps = 1.f / frame_time;
-		std::cout << "fps: " << m_fps << std::endl;
 		m_guiUpdateClock = 0;
 
 		EnergyP = SystemPotentialEnergy();
@@ -684,9 +685,9 @@ void Game::GenerateCubeMesh()
 
 void Game::InitObjects()
 {
-	int count_x = 10;
+	int count_x = 2;
 	int count_y = 1;
-	int count_z = 10;
+	int count_z = 1;
 
 	for (int x = 0; x < count_x; x++)
 	{
@@ -701,8 +702,6 @@ void Game::InitObjects()
 		}
 	}
 
-	long double ld = 0.0l;
-
 	// m_objects.emplace_back(m_textureManager);
 	// m_objects.emplace_back(m_textureManager);
 	//
@@ -714,12 +713,12 @@ void Game::InitObjects()
 
 double Game::SystemKineticEnergy()
 {
-	double e = 0.f;
+	ttvec3::BigFloat e = 0.0;
 	for (const auto& obj : m_objects)
 	{
 		e += obj.KineticEnergy();
 	}
-	return e / m_timestep;
+	return (e / m_timestep).ToDouble();
 }
 
 double Game::SystemPotentialEnergy()
@@ -729,7 +728,7 @@ double Game::SystemPotentialEnergy()
 	{
 		for (int j = i + 1; j < m_objects.size(); j++)
 		{
-			e += m_objects[i].PotentialEnergy(m_objects[j], 1);
+			e += m_objects[i].PotentialEnergy(m_objects[j], m_gSolver->GConstant()).ToDouble();
 		}
 	}
 

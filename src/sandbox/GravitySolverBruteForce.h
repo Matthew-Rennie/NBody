@@ -11,6 +11,6 @@ public:
 
 private:
 
-	double CalcForce(const Object3d& first, const Object3d& second) const;
-	glm::dvec3 CalcDirection(const Object3d& first, const Object3d& second) const;
+	ttvec3::BigFloat CalcForce(const Object3d& first, const Object3d& second) const;
+	ttvec3 CalcDirection(const Object3d& first, const Object3d& second) const;
 };

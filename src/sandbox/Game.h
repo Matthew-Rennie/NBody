@@ -75,5 +75,5 @@ protected:
 	std::vector<Object3d> m_objects;
 	GravitySolverBase* m_gSolver;
 
-	const double m_timestep = 0.0001f;
+	const ttvec3::BigFloat m_timestep = 0.0001f;
 };

@@ -1,9 +1,9 @@
-local ROOT = "../../"
+local ROOT = "../../../"
 
-project "Core"
+ project "ttmath"
   kind "StaticLib"
   language "C++"
-  targetname "Core" -- the name of the executable saved to targetdir
+  targetname "ttmath" -- the name of the executable saved to targetdir
 
   -----------------------------------
 -- COMPILER/LINKER CONFIGURATIONS
@@ -31,40 +31,31 @@ filter { "configurations:Release" }
   targetdir(output_dir_root)    -- Where all output files are stored
 
   local source_dir_root         = ROOT .. "src"
-  local source_dir_engine       = source_dir_root .. "/core"
   local source_dir_dependencies = source_dir_root .. "/extern"
+  local source_dir_engine       = source_dir_root .. "/extern/ttmath"
 
   local source_dir_includes     = source_dir_dependencies
   local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.host()
   -- optional for libs that are 32 or 64 bit specific
   local source_dir_libs32       = source_dir_libs .. "/lib_x32"
   local source_dir_libs64       = source_dir_libs .. "/lib_x64"
-  
-  pchheader "stdafx.hpp"
-  pchsource (source_dir_engine .. "/stdafx.cpp")
+  -- pchheader "stdafx.hpp"
+  -- pchsource (source_dir_engine .. "/stdafx.cpp")
    
   files
   {
-    source_dir_engine .. "/**.c",
     source_dir_engine .. "/**.h",
-    source_dir_engine .. "/**.cpp",
     source_dir_engine .. "/**.hpp",
-    source_dir_engine .. "/**.hlsl",
-    source_dir_engine .. "/**.glsl",
-  }
-
-  links
-  {
-    "graphics",
-    "ttmath"
+    source_dir_engine .. "/**.asm",
   }
 
    -- Where compiler should look for library includes
    -- NOTE: for library headers always use  '#include <LIB/lib.hpp>' not quotes
    includedirs
    {
-     source_dir_root,
-     source_dir_includes
+    source_dir_root,
+    source_dir_includes,
+    source_dir_engine,
    }
    
    -- Where linker should look for library files

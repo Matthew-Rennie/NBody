@@ -1,7 +1,7 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include "Force.h"
+#include "ttvec3.h"
 
 namespace dx11
 {
@@ -25,32 +25,32 @@ public:
 		m_textureManager = texManager;
 	}
 
-	void Update(const double dt);
+	void Update(const ttvec3::BigFloat& dt);
 	void Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* camera);
 
-	double Mass() const { return m_mass; }
-	glm::dvec3 Position() const { return m_position; }
-	glm::dvec3 Velocity() const { return m_velocity; }
+	ttvec3::BigFloat Mass() const { return m_mass; }
+	ttvec3 Position() const { return m_position; }
+	ttvec3 Velocity() const { return m_velocity; }
 
 	void SetMass(const double mass) { m_mass = mass; }
-	void SetPosition(const glm::dvec3 pos) { m_position = pos; }
-	void SetVelocity(const glm::dvec3 vel) { m_velocity = vel; }
+	void SetPosition(const ttvec3 pos) { m_position = pos; }
+	void SetVelocity(const ttvec3 vel) { m_velocity = vel; }
 
 	void ApplyForce(const Force force) { m_forces.push_back(force); }
-	void ApplyForce(const glm::dvec3 dir, const double mag) { m_forces.emplace_back(dir, mag); }
+	void ApplyForce(const ttvec3 dir, const ttvec3::BigFloat mag) { m_forces.emplace_back(dir, mag); }
 
 	void SetVertexBuff(dx11::DX11VertexBuffer* vbuff) { m_vbuffer = vbuff; }
 
-	double KineticEnergy() const;
-	double PotentialEnergy(const Object3d& other, double Gconstant) const;
+	ttvec3::BigFloat KineticEnergy() const;
+	ttvec3::BigFloat PotentialEnergy(const Object3d& other, ttvec3::BigFloat Gconstant) const;
 
 protected:
 
 	std::vector<Force> m_forces;
 
-	double m_mass = 0.f;
-	glm::dvec3 m_position = glm::dvec3(0.f);
-	glm::dvec3 m_velocity = glm::dvec3(0.f);
+	ttvec3::BigFloat m_mass = 0.0;
+	ttvec3 m_position;
+	ttvec3 m_velocity;
 
 	graphics::TextureManager* m_textureManager = nullptr;
 	dx11::DX11VertexBuffer* m_vbuffer = nullptr;
