@@ -34,7 +34,7 @@ filter { "configurations:Release" }
   local source_dir_engine       = source_dir_root .. "/DX11"
   local source_dir_dependencies = source_dir_root .. "/extern"
 
-  local source_dir_includes     = source_dir_dependencies .. "/Includes"
+  local source_dir_includes     = source_dir_dependencies
   local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.host()
   -- optional for libs that are 32 or 64 bit specific
   local source_dir_libs32       = source_dir_libs .. "/lib_x32"
