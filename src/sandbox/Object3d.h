@@ -44,6 +44,8 @@ public:
 	double KineticEnergy() const;
 	double PotentialEnergy(const Object3d& other, double Gconstant) const;
 
+	double Radius();
+
 protected:
 
 	std::vector<Force> m_forces;

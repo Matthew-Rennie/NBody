@@ -41,7 +41,9 @@ void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* came
 	BuffType* bufftype = (BuffType*)shaderData.vs_data[0].buffer;
 
 	glm::dmat4x4 w = glm::translate(glm::dmat4x4(1.f), m_position);
-	w = glm::scale(w, glm::dvec3(0.1, 0.1, 0.1));
+
+	double r = Radius();
+	w = glm::scale(w, glm::dvec3(r, r, r));
 
 	bufftype->world = (glm::mat4x4)glm::transpose(w);
 	bufftype->view = glm::transpose(camera->getViewMatrix());
@@ -67,4 +69,9 @@ double Object3d::PotentialEnergy(const Object3d& other, double Gconstant) const
 	double r = glm::length(Position() - other.Position());
 
 	return -(Mass() * other.Mass() * Gconstant) / r;
+}
+
+double Object3d::Radius()
+{
+	return std::cbrt(m_mass) * 0.1;
 }
