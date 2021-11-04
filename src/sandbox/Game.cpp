@@ -5,6 +5,7 @@
 #include "graphics/TextureManager.h"
 
 #include "GravitySolverBruteForce.h"
+#include "GravitySolverOctTree.h"
 
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
@@ -35,7 +36,8 @@ bool Game::Init()
 	m_textureManager = new graphics::TextureManager(m_renderer);
 	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
 
-	m_gSolver = new GravitySolverBruteForce();
+	// m_gSolver = new GravitySolverBruteForce();
+	m_gSolver = new GravitySolverOctTree();
 
 	InitObjects();
 
@@ -684,9 +686,9 @@ void Game::GenerateCubeMesh()
 
 void Game::InitObjects()
 {
-	int count_x = 10;
+	int count_x = 3;
 	int count_y = 1;
-	int count_z = 10;
+	int count_z = 3;
 
 	for (int x = 0; x < count_x; x++)
 	{
@@ -700,17 +702,18 @@ void Game::InitObjects()
 			}
 		}
 	}
-
-	long double ld = 0.0l;
-
+	// m_objects[0].SetMass(5.f);
+	//
+	// long double ld = 0.0l;
+	//
 	// m_objects.emplace_back(m_textureManager);
 	// m_objects.emplace_back(m_textureManager);
 	//
-	// m_objects[0].SetPosition({ 1,0,0 });
+	// m_objects[0].SetPosition({ -2,0,0 });
 	// m_objects[1].SetPosition({ -1,0,0 });
 	// m_objects[0].SetMass(1.f);
-	// m_objects[1].SetMass(1.f);
-}
+	// m_objects[1].SetMass(9.f);
+}	//
 
 double Game::SystemKineticEnergy()
 {

@@ -30,7 +30,7 @@ double GravitySolverBruteForce::CalcForce(const Object3d& first, const Object3d&
 	double r = glm::length(diff);
 	double m1 = first.Mass();
 	double m2 = second.Mass();
-	double G = 1; // TODO replace
+	double G = 1; // #TODO replace
 
 	double F = (G * m1 * m2) / (r * r);
 
