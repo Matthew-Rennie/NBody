@@ -51,7 +51,7 @@ namespace dx11
 
 		void set_resolution(int width, int height);
 
-		void render(dx11::DX11VertexBuffer* vbuff);
+		void render(dx11::DX11VertexBuffer* vbuff, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		void set_shader(DX11Shader* shader);
 		glm::mat4x4 getProjectionMatrix(float fov_deg);
 

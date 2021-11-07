@@ -7,7 +7,7 @@
 #include "graphics/TextureManager.h"
 #include "glm/glm.hpp"
 #include "graphics/CustomCamera.h"
-#include "glm/fwd.hpp"
+
 void Object3d::Update(const double dt)
 {
 	glm::dvec3 acceleration = glm::dvec3(0.f);

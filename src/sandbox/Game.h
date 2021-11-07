@@ -18,6 +18,7 @@ namespace dx11
 	class DX11Shader;
 	class DX11VertexBuffer;
 	class DX11Renderer;
+	class DX11LineRenderer;
 }
 
 class GravitySolverBase;
@@ -57,7 +58,8 @@ protected:
 
 	dx11::DX11Renderer* m_renderer = nullptr;
 	dx11::DX11Shader* m_shader = nullptr;
-	dx11::DX11VertexBuffer* m_vbuffer;
+	dx11::DX11VertexBuffer* m_vbuffer = nullptr;
+	dx11::DX11LineRenderer* m_lineRenderer = nullptr;
 
 	void InitWindow();
 

@@ -10,6 +10,8 @@
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
 #include "DX11/DX11Shader.h"
+#include "DX11/DX11LineRenderer.h"
+
 bool Game::Init()
 {
 	if (!BaseApplication::Init())
@@ -20,6 +22,8 @@ bool Game::Init()
 	m_renderer = new dx11::DX11Renderer(&m_input);
 	m_renderer->init(m_window);
 	// m_renderer->set_vsync(true);
+
+	m_lineRenderer = new dx11::DX11LineRenderer(m_renderer);
 
 	m_shader = new dx11::DX11Shader(m_renderer);
 	m_shader->load_VS(L"shader_vs.cso");
@@ -50,6 +54,7 @@ bool Game::Release()
 		return false;
 
 	SAFE_DELETE(m_renderer);
+	SAFE_DELETE(m_lineRenderer);
 	SAFE_DELETE(m_shader);
 	SAFE_DELETE(m_vbuffer);
 	SAFE_DELETE(m_window);
@@ -124,6 +129,7 @@ bool Game::Render()
 		}
 	}
 
+	m_lineRenderer->Render(camera.getViewMatrix());
 	m_renderer->end_frame();
 
 	return true;
