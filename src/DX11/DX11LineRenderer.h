@@ -14,6 +14,9 @@ namespace dx11
 
 		struct Line
 		{
+			Line() :
+				p1({}), p2({}) {}
+
 			Line(glm::dvec3 p1_in, glm::dvec3 p2_in) :
 				p1(p1_in), p2(p2_in) {}
 
@@ -24,7 +27,7 @@ namespace dx11
 		DX11LineRenderer(DX11Renderer* renderer);
 		~DX11LineRenderer();
 
-		void Draw(glm::dvec3 p1, glm::dvec3 p2, glm::mat4x4 view);
+		void Draw(glm::dvec3 p1, glm::dvec3 p2, glm::mat4x4 view) const;
 
 		void AddLine(glm::dvec3 p1, glm::dvec3 p2);
 		void AddLine(Line line);

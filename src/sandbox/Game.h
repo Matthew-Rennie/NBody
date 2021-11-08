@@ -11,6 +11,7 @@ using namespace DirectX;
 namespace graphics
 {
 	class TextureManager;
+	class WireCubeRenderer;
 }
 
 namespace dx11
@@ -18,7 +19,6 @@ namespace dx11
 	class DX11Shader;
 	class DX11VertexBuffer;
 	class DX11Renderer;
-	class DX11LineRenderer;
 }
 
 class GravitySolverBase;
@@ -59,7 +59,6 @@ protected:
 	dx11::DX11Renderer* m_renderer = nullptr;
 	dx11::DX11Shader* m_shader = nullptr;
 	dx11::DX11VertexBuffer* m_vbuffer = nullptr;
-	dx11::DX11LineRenderer* m_lineRenderer = nullptr;
 
 	void InitWindow();
 
@@ -72,7 +71,8 @@ protected:
 	void RenderGUI();
 
 	graphics::FreeCamera camera;
-	graphics::TextureManager* m_textureManager;
+	graphics::TextureManager* m_textureManager = nullptr;
+	graphics::WireCubeRenderer* m_wireCubeRenderer = nullptr;
 
 	std::vector<Object3d> m_objects;
 	GravitySolverBase* m_gSolver;

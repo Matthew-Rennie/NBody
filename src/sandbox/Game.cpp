@@ -3,6 +3,7 @@
 #include "imGUI/imgui.h"
 #include "core/Window.h"
 #include "graphics/TextureManager.h"
+#include "graphics/WireCubeRenderer.h"
 
 #include "GravitySolverBruteForce.h"
 #include "GravitySolverOctTree.h"
@@ -10,7 +11,6 @@
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
 #include "DX11/DX11Shader.h"
-#include "DX11/DX11LineRenderer.h"
 
 bool Game::Init()
 {
@@ -22,8 +22,6 @@ bool Game::Init()
 	m_renderer = new dx11::DX11Renderer(&m_input);
 	m_renderer->init(m_window);
 	// m_renderer->set_vsync(true);
-
-	m_lineRenderer = new dx11::DX11LineRenderer(m_renderer);
 
 	m_shader = new dx11::DX11Shader(m_renderer);
 	m_shader->load_VS(L"shader_vs.cso");
@@ -40,6 +38,8 @@ bool Game::Init()
 	m_textureManager = new graphics::TextureManager(m_renderer);
 	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
 
+	m_wireCubeRenderer = new graphics::WireCubeRenderer(m_renderer, &camera);
+
 	// m_gSolver = new GravitySolverBruteForce();
 	m_gSolver = new GravitySolverOctTree();
 
@@ -54,11 +54,11 @@ bool Game::Release()
 		return false;
 
 	SAFE_DELETE(m_renderer);
-	SAFE_DELETE(m_lineRenderer);
 	SAFE_DELETE(m_shader);
 	SAFE_DELETE(m_vbuffer);
 	SAFE_DELETE(m_window);
 	SAFE_DELETE(m_textureManager);
+	SAFE_DELETE(m_wireCubeRenderer);
 	SAFE_DELETE(m_gSolver);
 
 	return true;
@@ -129,7 +129,13 @@ bool Game::Render()
 		}
 	}
 
-	m_lineRenderer->Render(camera.getViewMatrix());
+	auto g_oct = dynamic_cast<GravitySolverOctTree*>(m_gSolver);
+	if (g_oct)
+	{
+		g_oct->RenderWireframe(m_wireCubeRenderer);
+	}
+
+	m_wireCubeRenderer->Render();
 	m_renderer->end_frame();
 
 	return true;
@@ -747,36 +753,48 @@ double Game::SystemPotentialEnergy()
 
 void Game::RenderGUI()
 {
-	if (ImGui::TreeNode("Debug Options"))
+	if (ImGui::CollapsingHeader("Debug Options"))
 	{
+		ImGui::Indent(10);
+
 		ImGui::Checkbox("Enable Rendering", &m_enableRendering);
 		ImGui::InputInt("Target Frame Rate", &m_targetFrameRate);
 		ImGui::InputDouble("GUI Refresh Rate", &m_guiUpdateRate);
 
-		ImGui::TreePop();
+		ImGui::Indent(-10);
 	}
 
-	ImGui::Spacing();
+	if (ImGui::CollapsingHeader("Performance"))
+	{
+		ImGui::Indent(10);
 
-	ImGui::Text("steps per second: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(m_fps).c_str());
+		ImGui::Text("steps per second: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(m_fps).c_str());
 
-	ImGui::Text("object count: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(m_objects.size()).c_str());
+		ImGui::Text("object count: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(m_objects.size()).c_str());
 
-	ImGui::Spacing();
+		ImGui::Indent(-10);
+	}
 
-	ImGui::Text("Potential Energy: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(EnergyP).c_str());
+	if (ImGui::CollapsingHeader("Energy"))
+	{
+		ImGui::Indent(10);
 
-	ImGui::Text("Kinetic Energy: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(EnergyK).c_str());
+		ImGui::Text("Potential Energy: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(EnergyP).c_str());
 
-	ImGui::Text("Total Energy: ");
-	ImGui::SameLine();
-	ImGui::Text(std::to_string(EnergyTotal).c_str());
+		ImGui::Text("Kinetic Energy: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(EnergyK).c_str());
+
+		ImGui::Text("Total Energy: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(EnergyTotal).c_str());
+
+		ImGui::Indent(-10);
+	}
 }

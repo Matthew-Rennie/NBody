@@ -19,7 +19,7 @@ dx11::DX11LineRenderer::~DX11LineRenderer()
 	m_shader = nullptr;
 }
 
-void dx11::DX11LineRenderer::Draw(glm::dvec3 p1, glm::dvec3 p2, glm::mat4x4 view)
+void dx11::DX11LineRenderer::Draw(glm::dvec3 p1, glm::dvec3 p2, glm::mat4x4 view) const
 {
 	VertexType vtypebuff[2] = {};
 
