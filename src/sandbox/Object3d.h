@@ -46,7 +46,11 @@ public:
 
 	double Radius();
 
+	glm::dvec3 LastTickForce() { return m_lastTickForce; }
+
 protected:
+
+	glm::dvec3 m_lastTickForce;
 
 	std::vector<Force> m_forces;
 

@@ -18,10 +18,15 @@ public:
 
 	void RenderWireframe(graphics::WireCubeRenderer* renderer) const;
 
+	void DrawDebugGui();
+
 private:
+
+	unsigned long long count = 0;
 
 	OctTreeNode* BuildTree(std::vector<Object3d>& objects);
 	void RenderNode(const OctTreeNode* node, graphics::WireCubeRenderer* renderer) const;
+	void DrawDebugGuiNode(OctTreeNode* node);
 
 	// kept here so it can be rendered for debugging
 	OctTreeNode* root = nullptr;

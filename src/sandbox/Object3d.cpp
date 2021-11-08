@@ -16,13 +16,14 @@ void Object3d::Update(const double dt)
 	{
 		acceleration += force.dir * force.mag;
 	}
+	m_lastTickForce = acceleration;
 	m_forces.clear();
 
 	acceleration /= Mass();
 	acceleration *= dt;
 
-	m_position += m_velocity * dt;
 	m_velocity += acceleration * dt;
+	m_position += m_velocity * dt;
 }
 
 void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* camera)

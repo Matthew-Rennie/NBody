@@ -89,11 +89,13 @@ bool Game::Update(const double frame_time)
 	camera.handleInput((float)frame_time);
 
 	if (m_playing)
+	{
 		m_gSolver->CalculateForces(m_objects);
 
-	for (auto& obj : m_objects)
-	{
-		obj.Update(m_timestep);
+		for (auto& obj : m_objects)
+		{
+			obj.Update(m_timestep);
+		}
 	}
 
 	return true;
@@ -809,5 +811,11 @@ void Game::RenderGUI()
 		ImGui::Text(std::to_string(EnergyTotal).c_str());
 
 		ImGui::Indent(-10);
+	}
+
+	auto g_oct = dynamic_cast<GravitySolverOctTree*>(m_gSolver);
+	if (g_oct)
+	{
+		g_oct->DrawDebugGui();
 	}
 }

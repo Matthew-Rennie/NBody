@@ -146,8 +146,6 @@ bool OctTreeNode::CalculateMass()
 
 bool OctTreeNode::CalculateForces()
 {
-	glm::dvec3 force = {};
-
 	if (m_objects.size() == 1)
 	{
 		// traverse up tree
