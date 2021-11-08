@@ -24,4 +24,8 @@ public:
 
 	glm::dvec3 m_centreOfMass = {};
 	double m_mass = 0;
+
+private:
+
+	void CalcForceRecursive(const OctTreeNode* node, const OctTreeNode* lastNode) const;
 };

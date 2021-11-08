@@ -2,6 +2,9 @@
 #include "OctTreeNode.h"
 #include "Object3d.h"
 
+#define BARNES_HUTT_THETA DOUBLE(1.2)
+#define BARNES_HUTT_MIN_DISTANCE DOUBLE(0.25)
+
 OctTreeNode::~OctTreeNode()
 {
 	SAFE_DELETE_STL_CONTAINER(m_children);
@@ -142,6 +145,8 @@ bool OctTreeNode::CalculateMass()
 		m_centreOfMass += diff;
 		m_mass += c->m_mass;
 	}
+
+	return true;
 }
 
 bool OctTreeNode::CalculateForces()
@@ -157,28 +162,7 @@ bool OctTreeNode::CalculateForces()
 		OctTreeNode* node = this->m_parent;
 		while (node)
 		{
-			for (const auto& c : node->m_children)
-			{
-				if (c->m_mass == 0.0)
-					continue;
-
-				if (c == lastNode)
-					continue;
-
-				glm::dvec3 dir = c->m_centreOfMass - objectPos;
-				double r = glm::length(dir);
-				if (r < 0.25)
-					continue;
-				dir = dir / r;
-
-				double m1 = c->m_mass;
-				double m2 = objectMass;
-				double G = 1; // #TODO replace
-
-				double F = (G * m1 * m2) / (r * r);
-
-				m_objects[0]->ApplyForce(dir, F);
-			}
+			CalcForceRecursive(node, lastNode);
 
 			lastNode = node;
 			node = node->m_parent;
@@ -193,4 +177,60 @@ bool OctTreeNode::CalculateForces()
 		c->CalculateForces();
 
 	return true;
+}
+
+void OctTreeNode::CalcForceRecursive(const OctTreeNode* node, const OctTreeNode* lastNode) const
+{
+	glm::dvec3 objectPos = m_objects[0]->Position();
+	double objectMass = m_objects[0]->Mass();
+
+	for (const auto& c : node->m_children)
+	{
+		if (c == nullptr) continue;
+
+		if (c->m_mass == 0.0) continue;
+
+		if (c == lastNode) continue;
+
+		glm::dvec3 dir = c->m_centreOfMass - objectPos;
+		double r = glm::length(dir);
+		double d = (c->m_lenPointToEdge * 2) / r;
+
+		if (d > BARNES_HUTT_THETA)
+		{
+			// use COM of node
+			if (r < BARNES_HUTT_MIN_DISTANCE)
+				continue;
+
+			dir = dir / r;
+
+			double m1 = c->m_mass;
+			double m2 = objectMass;
+			double G = 1; // #TODO replace
+
+			double F = (G * m1 * m2) / (r * r);
+
+			m_objects[0]->ApplyForce(dir, F);
+		}
+		else if (c->m_objects.size() == 1)
+		{
+			// only one object, use node COM
+			if (r < BARNES_HUTT_MIN_DISTANCE)
+				continue;
+			dir = dir / r;
+
+			double m1 = c->m_mass;
+			double m2 = objectMass;
+			double G = 1; // #TODO replace
+
+			double F = (G * m1 * m2) / (r * r);
+
+			m_objects[0]->ApplyForce(dir, F);
+		}
+		else
+		{
+			CalcForceRecursive(c, nullptr);
+			// node is too close, use each sub node
+		}
+	}
 }
