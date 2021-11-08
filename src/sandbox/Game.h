@@ -47,6 +47,8 @@ protected:
 	double EnergyP = 0.f;
 	double EnergyTotal = 0.f;
 
+	bool m_playing = false;
+
 	struct VertexType
 	{
 		XMFLOAT3 position;

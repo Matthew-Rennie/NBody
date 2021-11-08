@@ -2,7 +2,7 @@
 #include "core/Window.h"
 #include "core/Input.h"
 
-void graphics::FreeCamera::handleInput(float dt)
+void graphics::FreeCamera::handleInput(double dt)
 {
 	setFrameTime(dt);
 	// Handle the input.
@@ -117,7 +117,7 @@ void graphics::FreeCamera::handleInput(float dt)
 void graphics::FreeCamera::moveForward()
 {
 	// Update the forward movement based on the frame time
-	float speed = m_frameTime * m_move_speed;
+	double speed = m_frameTime * m_move_speed;
 
 	// Update the position.
 	m_position -= m_forward * speed;
@@ -126,7 +126,7 @@ void graphics::FreeCamera::moveForward()
 void graphics::FreeCamera::moveBack()
 {
 	// Update the backward movement based on the frame time
-	float speed = m_frameTime * m_move_speed;// *0.5f;
+	double speed = m_frameTime * m_move_speed;// *0.5f;
 
 	// Update the position.
 	m_position += m_forward * speed;
@@ -135,7 +135,7 @@ void graphics::FreeCamera::moveBack()
 void graphics::FreeCamera::moveUp()
 {
 	// Update the upward movement based on the frame time
-	float speed = m_frameTime * m_move_speed;// *0.5f;
+	double speed = m_frameTime * m_move_speed;// *0.5f;
 
 	m_position += m_up * speed;
 }
@@ -143,7 +143,7 @@ void graphics::FreeCamera::moveUp()
 void graphics::FreeCamera::moveDown()
 {
 	// Update the downward movement based on the frame time
-	float speed = m_frameTime * m_move_speed;// *0.5f;
+	double speed = m_frameTime * m_move_speed;// *0.5f;
 
 	m_position -= m_up * speed;
 }
@@ -151,7 +151,7 @@ void graphics::FreeCamera::moveDown()
 void graphics::FreeCamera::moveLeft()
 {
 	// Update the forward movement based on the frame time
-	float speed = m_frameTime * m_move_speed;
+	double speed = m_frameTime * m_move_speed;
 
 	m_position -= m_right * speed;
 }
@@ -159,7 +159,7 @@ void graphics::FreeCamera::moveLeft()
 void graphics::FreeCamera::moveRight()
 {
 	// Update the forward movement based on the frame time
-	float speed = m_frameTime * m_move_speed;
+	double speed = m_frameTime * m_move_speed;
 
 	m_position += m_right * speed;
 }
@@ -167,7 +167,7 @@ void graphics::FreeCamera::moveRight()
 void graphics::FreeCamera::turnLeft()
 {
 	// Update the left turn movement based on the frame time
-	float speed = m_frameTime * m_rot_speed;
+	double speed = m_frameTime * m_rot_speed;
 
 	// Update the rotation.
 	m_rotation.y += speed;
@@ -182,7 +182,7 @@ void graphics::FreeCamera::turnLeft()
 void graphics::FreeCamera::turnRight()
 {
 	// Update the right turn movement based on the frame time
-	float speed = m_frameTime * m_rot_speed;
+	double speed = m_frameTime * m_rot_speed;
 
 	// Update the rotation.
 	m_rotation.y -= speed;
@@ -197,7 +197,7 @@ void graphics::FreeCamera::turnRight()
 void graphics::FreeCamera::turnUp()
 {
 	// Update the upward rotation movement based on the frame time
-	float speed = m_frameTime * m_rot_speed;
+	double speed = m_frameTime * m_rot_speed;
 
 	// Update the rotation.
 	m_rotation.x -= speed;
@@ -212,7 +212,7 @@ void graphics::FreeCamera::turnUp()
 void graphics::FreeCamera::turnDown()
 {
 	// Update the downward rotation movement based on the frame time
-	float speed = m_frameTime * m_rot_speed;
+	double speed = m_frameTime * m_rot_speed;
 
 	// Update the rotation.
 	m_rotation.x += speed;
@@ -227,7 +227,7 @@ void graphics::FreeCamera::turnDown()
 void graphics::FreeCamera::turn(int x, int y)
 {
 	// Update the rotation.
-	m_rotation.y += (float)x * m_rot_speed;
+	m_rotation.y += (double)x * m_rot_speed;
 
-	m_rotation.x += (float)y * m_rot_speed;
+	m_rotation.x += (double)y * m_rot_speed;
 }

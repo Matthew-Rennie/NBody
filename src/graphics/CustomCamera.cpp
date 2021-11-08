@@ -4,15 +4,15 @@
 
 graphics::CustomCamera::CustomCamera()
 {
-	m_position = glm::vec3(0.f, 0.f, 0.f);
-	m_rotation = glm::vec3(0.f, 0.f, 0.f);
+	m_position = glm::dvec3(0.0, 0.0, 0.0);
+	m_rotation = glm::dvec3(0.0, 0.0, 0.0);
 
 	//lookSpeed = 4.0f;
 
 	// Generate ortho matrix
-	glm::vec3 up = { 0.0f, 1.0, 0.0 };
-	glm::vec3 position = { 0.0f, 0.0, -10.0 };
-	glm::vec3 lookAt = { 0.0f, 0.0f, 0.0f };
+	glm::dvec3 up = { 0.0, 1.0, 0.0 };
+	glm::dvec3 position = { 0.0, 0.0, -10.0 };
+	glm::dvec3 lookAt = { 0.0, 0.0, 0.0 };
 
 	m_orthoMatrix = glm::lookAt(position, lookAt, up);
 	//orthoMatrix = XMMatrixLookAtLH(position, lookAt, up);
@@ -23,14 +23,14 @@ void graphics::CustomCamera::setWindow(core::Window* window)
 	m_window = window;
 }
 
-void graphics::CustomCamera::setPosition(float px, float py, float pz)
+void graphics::CustomCamera::setPosition(double px, double py, double pz)
 {
 	m_position.x = px;
 	m_position.y = py;
 	m_position.z = pz;
 }
 
-void graphics::CustomCamera::setRotation(float rx, float ry, float rz)
+void graphics::CustomCamera::setRotation(double rx, double ry, double rz)
 {
 	m_rotation.x = rx;
 	m_rotation.y = ry;
@@ -39,28 +39,28 @@ void graphics::CustomCamera::setRotation(float rx, float ry, float rz)
 
 void graphics::CustomCamera::update()
 {
-	glm::mat4x4 rotationMatrix(1);
+	glm::dmat4x4 rotationMatrix(1);
 
 	// Setup the vectors
-	glm::vec3 lookAt = { 0.0, 0.0, 1.0f };
+	glm::dvec3 lookAt = { 0.0, 0.0, 1.0 };
 
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
-	float yaw, pitch, roll;
+	double yaw, pitch, roll;
 	pitch = m_rotation.x;
 	yaw = m_rotation.y;
 	roll = m_rotation.z;
 
-	float cosR, cosP, cosY;
-	float sinR, sinP, sinY;
+	double cosR, cosP, cosY;
+	double sinR, sinP, sinY;
 
-	constexpr float pi_by180 = 3.14159265359f / 180.f;
+	constexpr double pi_by180 = 3.14159265359 / 180.0;
 
-	cosY = cosf(yaw * pi_by180);
-	cosP = cosf(pitch * pi_by180);
-	cosR = cosf(roll * pi_by180);
-	sinY = sinf(yaw * pi_by180);
-	sinP = sinf(pitch * pi_by180);
-	sinR = sinf(roll * pi_by180);
+	cosY = cos(yaw * pi_by180);
+	cosP = cos(pitch * pi_by180);
+	cosR = cos(roll * pi_by180);
+	sinY = sin(yaw * pi_by180);
+	sinP = sin(pitch * pi_by180);
+	sinR = sin(roll * pi_by180);
 
 	m_forward.x = (sinY * cosP);
 	m_forward.y = sinP;

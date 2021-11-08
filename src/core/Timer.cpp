@@ -13,7 +13,7 @@ core::Timer::Timer()
 	}
 
 	// Find out how many times the frequency counter ticks every second.
-	ticksPerS = (float)(frequency);
+	ticksPerS = (double)(frequency);
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 
@@ -30,11 +30,11 @@ core::Timer::~Timer()
 void core::Timer::frame()
 {
 	INT64 currentTime = 0;
-	float timeDifference;
+	double timeDifference;
 
 	// Query the current time.
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
-	timeDifference = (float)(currentTime - startTime);
+	timeDifference = (double)(currentTime - startTime);
 	frameTime = timeDifference / ticksPerS;
 
 	// Calc FPS
@@ -53,12 +53,12 @@ void core::Timer::frame()
 	return;
 }
 
-float core::Timer::getTime()
+double core::Timer::getTime()
 {
 	return frameTime;
 }
 
-float core::Timer::getFPS()
+double core::Timer::getFPS()
 {
 	return fps;
 }

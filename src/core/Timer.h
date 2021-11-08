@@ -23,17 +23,17 @@ namespace core
 
 		void frame();	///< Update delta time, called every frame
 
-		float getTime();	///< Get delta time
-		float getFPS();		///< Get FPS (for display)
+		double getTime();	///< Get delta time
+		double getFPS();		///< Get FPS (for display)
 
 	private:
 		INT64 frequency = 0;
-		float ticksPerS = 0.f;
+		double ticksPerS = 0.f;
 		INT64 startTime = 0;
-		float frameTime = 0.f;
-		float fps = 0.f;
-		float frames = 0.f;
-		float elapsedTime = 0.f;
+		double frameTime = 0.f;
+		double fps = 0.f;
+		double frames = 0.f;
+		double elapsedTime = 0.f;
 	};
 }
 

@@ -7,7 +7,7 @@ namespace graphics
 	class FreeCamera : public CustomCamera
 	{
 	public:
-		void handleInput(float ft);
+		void handleInput(double ft);
 
 		void moveForward();
 		void moveBack();
@@ -22,17 +22,17 @@ namespace graphics
 		void turnDown();
 		void turn(int x, int y);
 
-		void setMoveSpeed(float ms) { m_move_speed = ms; }
-		void setRotSpeed(float rs) { m_rot_speed = rs; }
+		void setMoveSpeed(double ms) { m_move_speed = ms; }
+		void setRotSpeed(double rs) { m_rot_speed = rs; }
 
-		float* getMoveSpeed() { return &m_move_speed; }
-		float* getRotSpeed() { return &m_rot_speed; }
+		double* getMoveSpeed() { return &m_move_speed; }
+		double* getRotSpeed() { return &m_rot_speed; }
 
 	private:
 		POINT m_cursor;
 		int m_deltax, m_deltay;
 
-		float m_move_speed = 5.0f;
-		float m_rot_speed = 0.02f;
+		double m_move_speed = 5.0f;
+		double m_rot_speed = 0.01f;
 	};
 }

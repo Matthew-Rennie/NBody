@@ -88,7 +88,9 @@ bool Game::Update(const double frame_time)
 	}
 	camera.handleInput((float)frame_time);
 
-	m_gSolver->CalculateForces(m_objects);
+	if (m_playing)
+		m_gSolver->CalculateForces(m_objects);
+
 	for (auto& obj : m_objects)
 	{
 		obj.Update(m_timestep);
@@ -753,6 +755,17 @@ double Game::SystemPotentialEnergy()
 
 void Game::RenderGUI()
 {
+	if (m_playing)
+	{
+		if (ImGui::Button("pause"))
+			m_playing = false;
+	}
+	else
+	{
+		if (ImGui::Button("Play"))
+			m_playing = true;;
+	}
+
 	if (ImGui::CollapsingHeader("Debug Options"))
 	{
 		ImGui::Indent(10);
