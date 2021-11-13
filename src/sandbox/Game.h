@@ -30,7 +30,7 @@ public:
 	bool Init() override;
 	bool Release() override;
 	bool Update(const double frame_time) override;
-	bool Render() override;
+	bool Render(const double frame_time) override;
 
 	bool ReadyForRender() override;
 

@@ -33,6 +33,6 @@ namespace graphics
 		int m_deltax, m_deltay;
 
 		double m_move_speed = 5.0f;
-		double m_rot_speed = 0.01f;
+		double m_rot_speed = 0.1f;
 	};
 }

@@ -13,6 +13,7 @@ namespace core
 
 	protected:
 
-		core::Timer m_timer;
+		core::Timer m_updateTimer;
+		core::Timer m_renderTimer;
 	};
 }

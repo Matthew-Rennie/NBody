@@ -74,7 +74,6 @@ bool Game::Update(const double frame_time)
 	if (m_guiUpdateClock > m_guiUpdateRate)
 	{
 		m_fps = 1.f / frame_time;
-		std::cout << "fps: " << m_fps << std::endl;
 		m_guiUpdateClock = 0;
 
 		EnergyP = SystemPotentialEnergy();
@@ -89,7 +88,6 @@ bool Game::Update(const double frame_time)
 	{
 		return false;
 	}
-	camera.handleInput((float)frame_time);
 
 	if (m_playing)
 	{
@@ -104,13 +102,14 @@ bool Game::Update(const double frame_time)
 	return true;
 }
 
-bool Game::Render()
+bool Game::Render(const double frame_time)
 {
 	m_frameClock = 0.0;
 
-	if (!BaseApplication::Render())
+	if (!BaseApplication::Render(frame_time))
 		return false;
 
+	camera.handleInput(frame_time);
 	camera.update();
 
 	struct BuffType

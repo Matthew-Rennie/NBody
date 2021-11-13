@@ -28,8 +28,8 @@ void core::System::Run(BaseApplication* app)
 		}
 		else
 		{
-			m_timer.frame();
-			result = app->Update(m_timer.getTime());
+			m_updateTimer.frame();
+			result = app->Update(m_updateTimer.getTime());
 			if (!result)
 			{
 				done = true;
@@ -39,7 +39,8 @@ void core::System::Run(BaseApplication* app)
 			// allows app to disable rendering for a frame
 			if (app->ReadyForRender())
 			{
-				result = app->Render();
+				m_renderTimer.frame();
+				result = app->Render(m_renderTimer.getTime());
 				if (!result)
 				{
 					done = true;
