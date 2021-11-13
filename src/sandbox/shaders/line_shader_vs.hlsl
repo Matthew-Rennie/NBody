@@ -9,13 +9,13 @@ cbuffer MatrixBuffer : register(b0)
 struct InputType
 {
 	float4 position : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
+    float3 color : NORMAL;
 };
 
 struct OutputType
 {
     float4 position : SV_POSITION;
+    float3 color : COLOR;
 };
 
 OutputType main(InputType input)
@@ -26,6 +26,8 @@ OutputType main(InputType input)
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
+
+    output.color = input.color;
 
     return output;
 }

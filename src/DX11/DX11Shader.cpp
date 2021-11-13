@@ -82,7 +82,7 @@ bool dx11::DX11Shader::load_PS(wchar_t* filename)
 	return true;
 }
 
-bool dx11::DX11Shader::load_VS(wchar_t* filename)
+bool dx11::DX11Shader::load_VS(wchar_t* filename, const D3D11_INPUT_ELEMENT_DESC* polygonLayout, size_t polygonLayoutSize)
 {
 	ID3DBlob* vertexShaderBuffer;
 
@@ -127,16 +127,8 @@ bool dx11::DX11Shader::load_VS(wchar_t* filename)
 	// Create the vertex shader from the buffer.
 	m_device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), nullptr, &m_vertexShader);
 
-	// Create the vertex input layout description.
-	// This setup needs to match the VertexType stucture in the MeshClass and in the shader.
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
 	// Get a count of the elements in the layout.
-	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
+	numElements = polygonLayoutSize / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
 	m_device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);

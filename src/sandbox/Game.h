@@ -6,6 +6,7 @@
 
 #include <d3d11.h>
 #include <directxmath.h>
+#include "DX11/DX11VertexBuffer.h"
 using namespace DirectX;
 
 namespace graphics
@@ -17,7 +18,6 @@ namespace graphics
 namespace dx11
 {
 	class DX11Shader;
-	class DX11VertexBuffer;
 	class DX11Renderer;
 }
 
@@ -49,18 +49,11 @@ protected:
 
 	bool m_playing = false;
 
-	struct VertexType
-	{
-		XMFLOAT3 position;
-		XMFLOAT2 texture;
-		XMFLOAT3 normal;
-	};
-
 	core::Window* m_window = nullptr;
 
 	dx11::DX11Renderer* m_renderer = nullptr;
 	dx11::DX11Shader* m_shader = nullptr;
-	dx11::DX11VertexBuffer* m_vbuffer = nullptr;
+	dx11::DX11VertexBuffer<dx11::VertexType>* m_vbuffer = nullptr;
 
 	void InitWindow();
 

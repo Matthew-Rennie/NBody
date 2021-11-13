@@ -33,7 +33,7 @@ namespace dx11
 		void Release();
 
 		bool load_PS(wchar_t* filename);
-		bool load_VS(wchar_t* filename);
+		bool load_VS(wchar_t* filename, const D3D11_INPUT_ELEMENT_DESC* polygonLayout, size_t playgonLayountSize);
 
 		void run(ID3D11DeviceContext* context, UINT index_count);
 

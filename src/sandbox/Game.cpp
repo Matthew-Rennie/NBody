@@ -24,10 +24,10 @@ bool Game::Init()
 	// m_renderer->set_vsync(true);
 
 	m_shader = new dx11::DX11Shader(m_renderer);
-	m_shader->load_VS(L"shader_vs.cso");
+	m_shader->load_VS(L"shader_vs.cso", dx11::VertexLayout::VertexTypeLayout, sizeof(dx11::VertexLayout::VertexTypeLayout));
 	m_shader->load_PS(L"shader_ps.cso");
 
-	m_vbuffer = new dx11::DX11VertexBuffer();
+	m_vbuffer = new dx11::DX11VertexBuffer<dx11::VertexType>();
 
 	//GenerateTerrainMesh(5);
 	GenerateCubeMesh();
@@ -138,7 +138,7 @@ bool Game::Render()
 	{
 		g_oct->RenderWireframe(m_wireCubeRenderer);
 	}
-
+	m_wireCubeRenderer->AddCube({}, 1);
 	m_wireCubeRenderer->Render();
 	m_renderer->end_frame();
 
@@ -174,7 +174,7 @@ void Game::GenerateCubeMesh()
 	int indexCount;
 	int resolution = 1;
 
-	VertexType* vertices;
+	dx11::VertexType* vertices;
 	unsigned long* indices;
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
@@ -185,7 +185,7 @@ void Game::GenerateCubeMesh()
 	indexCount = vertexCount;
 
 	// Create the vertex and index array.
-	vertices = new VertexType[vertexCount];
+	vertices = new dx11::VertexType[vertexCount];
 	indices = new unsigned long[indexCount];
 
 	// Vertex variables
@@ -210,54 +210,54 @@ void Game::GenerateCubeMesh()
 		{
 			// Load the vertex array with data.
 			//0
-			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, -1.0f);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			vertices[v].pos = XMFLOAT3(xstart, ystart - yincrement, -1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(xstart + xincrement, ystart, -1.0f);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, ystart, -1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart, ystart, -1.0f);  // Top left.	-1.0, 1.0
-			vertices[v].texture = XMFLOAT2(txu, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			vertices[v].pos = XMFLOAT3(xstart, ystart, -1.0f);  // Top left.	-1.0, 1.0
+			vertices[v].tex = XMFLOAT2(txu, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//0
-			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, -1.0f);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			vertices[v].pos = XMFLOAT3(xstart, ystart - yincrement, -1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//3
-			vertices[v].position = XMFLOAT3(xstart + xincrement, ystart - yincrement, -1.0f);  // Bottom right.	1.0, -1.0, 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, ystart - yincrement, -1.0f);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(xstart + xincrement, ystart, -1.0f);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, ystart, -1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
 
 			indices[i] = i;
 			v++;
@@ -287,54 +287,54 @@ void Game::GenerateCubeMesh()
 		{
 			// Load the vertex array with data.
 			//0
-			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, 1.0f);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[v].pos = XMFLOAT3(xstart, ystart - yincrement, 1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart - xincrement, ystart, 1.0f);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[v].pos = XMFLOAT3(xstart - xincrement, ystart, 1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(xstart, ystart, 1.0f);  // Top left.	-1.0, 1.0
-			vertices[v].texture = XMFLOAT2(txu, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[v].pos = XMFLOAT3(xstart, ystart, 1.0f);  // Top left.	-1.0, 1.0
+			vertices[v].tex = XMFLOAT2(txu, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//0
-			vertices[v].position = XMFLOAT3(xstart, ystart - yincrement, 1.0f);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[v].pos = XMFLOAT3(xstart, ystart - yincrement, 1.0f);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//3
-			vertices[v].position = XMFLOAT3(xstart - xincrement, ystart - yincrement, 1.0f);  // Bottom right.	1.0, -1.0, 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[v].pos = XMFLOAT3(xstart - xincrement, ystart - yincrement, 1.0f);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart - xincrement, ystart, 1.0f);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[v].pos = XMFLOAT3(xstart - xincrement, ystart, 1.0f);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 			indices[i] = i;
 			v++;
@@ -364,54 +364,54 @@ void Game::GenerateCubeMesh()
 		{
 			// Load the vertex array with data.
 			//0
-			vertices[v].position = XMFLOAT3(1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(1.0f, ystart, xstart + xincrement);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(1.0f, ystart, xstart + xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(1.0f, ystart, xstart);  // Top left.	-1.0, 1.0
-			vertices[v].texture = XMFLOAT2(txu, txv);
-			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(1.0f, ystart, xstart);  // Top left.	-1.0, 1.0
+			vertices[v].tex = XMFLOAT2(txu, txv);
+			vertices[v].nor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//0
-			vertices[v].position = XMFLOAT3(1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//3
-			vertices[v].position = XMFLOAT3(1.0f, ystart - yincrement, xstart + xincrement);  // Bottom right.	1.0, -1.0, 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(1.0f, ystart - yincrement, xstart + xincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(1.0f, ystart, xstart + xincrement);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(1.0f, ystart, xstart + xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
@@ -440,54 +440,54 @@ void Game::GenerateCubeMesh()
 		{
 			// Load the vertex array with data.
 			//0
-			vertices[v].position = XMFLOAT3(-1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(-1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(-1.0f, ystart, xstart - xincrement);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(-1.0f, ystart, xstart - xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(-1.0f, ystart, xstart);  // Top left.	-1.0, 1.0
-			vertices[v].texture = XMFLOAT2(txu, txv);
-			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(-1.0f, ystart, xstart);  // Top left.	-1.0, 1.0
+			vertices[v].tex = XMFLOAT2(txu, txv);
+			vertices[v].nor = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//0
-			vertices[v].position = XMFLOAT3(-1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(-1.0f, ystart - yincrement, xstart);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//3
-			vertices[v].position = XMFLOAT3(-1.0f, ystart - yincrement, xstart - xincrement);  // Bottom right.	1.0, -1.0, 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(-1.0f, ystart - yincrement, xstart - xincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(-1.0f, ystart, xstart - xincrement);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(-1.0f, ystart, xstart - xincrement);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
@@ -517,54 +517,54 @@ void Game::GenerateCubeMesh()
 		{
 			// Load the vertex array with data.
 			//0
-			vertices[v].position = XMFLOAT3(xstart, 1.0f, ystart - yincrement);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart, 1.0f, ystart - yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart + xincrement, 1.0f, ystart);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, 1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(xstart, 1.0f, ystart);  // Top left.	-1.0, 1.0
-			vertices[v].texture = XMFLOAT2(txu, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart, 1.0f, ystart);  // Top left.	-1.0, 1.0
+			vertices[v].tex = XMFLOAT2(txu, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//0
-			vertices[v].position = XMFLOAT3(xstart, 1.0f, ystart - yincrement);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart, 1.0f, ystart - yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//3
-			vertices[v].position = XMFLOAT3(xstart + xincrement, 1.0f, ystart - yincrement);  // Bottom right.	1.0, -1.0, 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, 1.0f, ystart - yincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart + xincrement, 1.0f, ystart);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, 1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
@@ -594,54 +594,54 @@ void Game::GenerateCubeMesh()
 		{
 			// Load the vertex array with data.
 			//0
-			vertices[v].position = XMFLOAT3(xstart, -1.0f, ystart + yincrement);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart, -1.0f, ystart + yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart + xincrement, -1.0f, ystart);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, -1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//1
-			vertices[v].position = XMFLOAT3(xstart, -1.0f, ystart);  // Top left.	-1.0, 1.0
-			vertices[v].texture = XMFLOAT2(txu, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart, -1.0f, ystart);  // Top left.	-1.0, 1.0
+			vertices[v].tex = XMFLOAT2(txu, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//0
-			vertices[v].position = XMFLOAT3(xstart, -1.0f, ystart + yincrement);  // Bottom left. -1. -1. 0
-			vertices[v].texture = XMFLOAT2(txu, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart, -1.0f, ystart + yincrement);  // Bottom left. -1. -1. 0
+			vertices[v].tex = XMFLOAT2(txu, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//3
-			vertices[v].position = XMFLOAT3(xstart + xincrement, -1.0f, ystart + yincrement);  // Bottom right.	1.0, -1.0, 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv + txvinc);
-			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, -1.0f, ystart + yincrement);  // Bottom right.	1.0, -1.0, 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv + txvinc);
+			vertices[v].nor = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//2
-			vertices[v].position = XMFLOAT3(xstart + xincrement, -1.0f, ystart);  // Top right.	1.0, 1.0 0.0
-			vertices[v].texture = XMFLOAT2(txu + txuinc, txv);
-			vertices[v].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[v].pos = XMFLOAT3(xstart + xincrement, -1.0f, ystart);  // Top right.	1.0, 1.0 0.0
+			vertices[v].tex = XMFLOAT2(txu + txuinc, txv);
+			vertices[v].nor = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 			indices[i] = i;
 			v++;
@@ -661,7 +661,7 @@ void Game::GenerateCubeMesh()
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(dx11::VertexType) * vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;

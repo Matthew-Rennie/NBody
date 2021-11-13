@@ -119,21 +119,6 @@ void dx11::DX11Renderer::set_resolution(int width, int height)
 	}
 }
 
-void dx11::DX11Renderer::render(dx11::DX11VertexBuffer* vbuff, D3D_PRIMITIVE_TOPOLOGY topology)
-{
-	UINT stride = (UINT)sizeof(dx11::DX11VertexBuffer::DX11VertexType);
-	UINT offset = 0;
-
-	// Set vertex buffer stride and offset.
-
-	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, vbuff->pVertexBuffer(), &stride, &offset);
-	m_d3d->getDeviceContext()->IASetIndexBuffer(vbuff->IndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-	m_d3d->getDeviceContext()->IASetPrimitiveTopology(topology);
-	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_sampleState);
-
-	m_shader->run(m_d3d->getDeviceContext(), (UINT)vbuff->IndexCount());
-}
-
 void dx11::DX11Renderer::set_shader(DX11Shader* shader)
 {
 	m_shader = shader;

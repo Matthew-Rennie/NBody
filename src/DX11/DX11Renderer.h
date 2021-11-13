@@ -11,6 +11,9 @@
 #include "glm/glm.hpp"
 #include "DX11Shader.h"
 
+#include "DX11Vertex.h"
+#include "DX11VertexBuffer.h"
+
 namespace graphics
 {
 	struct Texture;
@@ -27,7 +30,6 @@ namespace core
 namespace dx11
 {
 	class DX11Shader;
-	class DX11VertexBuffer;
 
 	class DX11Renderer
 	{
@@ -51,7 +53,9 @@ namespace dx11
 
 		void set_resolution(int width, int height);
 
-		void render(dx11::DX11VertexBuffer* vbuff, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		template <typename _VertexType_>
+		void render(dx11::DX11VertexBuffer<_VertexType_>* vbuff, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 		void set_shader(DX11Shader* shader);
 		glm::mat4x4 getProjectionMatrix(float fov_deg);
 
@@ -88,4 +92,20 @@ namespace dx11
 		float m_near_plane = 0.1f;
 		float m_far_plane = 1000.f;
 	};
+
+	template <typename _VertexType_>
+	void dx11::DX11Renderer::render(dx11::DX11VertexBuffer<_VertexType_>* vbuff, D3D_PRIMITIVE_TOPOLOGY topology /*= D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST*/)
+	{
+		constexpr UINT stride = (UINT)sizeof(_VertexType_);
+		UINT offset = 0;
+
+		// Set vertex buffer stride and offset.
+
+		m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, vbuff->pVertexBuffer(), &stride, &offset);
+		m_d3d->getDeviceContext()->IASetIndexBuffer(vbuff->IndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		m_d3d->getDeviceContext()->IASetPrimitiveTopology(topology);
+		m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_sampleState);
+
+		m_shader->run(m_d3d->getDeviceContext(), (UINT)vbuff->IndexCount());
+	}
 }
