@@ -4,6 +4,7 @@
 #include "core/Window.h"
 #include "graphics/TextureManager.h"
 #include "graphics/WireCubeRenderer.h"
+#include "graphics/GridDrawer.h"
 
 #include "GravitySolverBruteForce.h"
 #include "GravitySolverOctTree.h"
@@ -39,6 +40,7 @@ bool Game::Init()
 	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
 
 	m_wireCubeRenderer = new graphics::WireCubeRenderer(m_renderer, &camera);
+	m_gridDrawer = new graphics::GridDrawer(m_renderer, &camera);
 
 	// m_gSolver = new GravitySolverBruteForce();
 	m_gSolver = new GravitySolverOctTree();
@@ -59,6 +61,7 @@ bool Game::Release()
 	SAFE_DELETE(m_window);
 	SAFE_DELETE(m_textureManager);
 	SAFE_DELETE(m_wireCubeRenderer);
+	SAFE_DELETE(m_gridDrawer);
 	SAFE_DELETE(m_gSolver);
 
 	return true;
@@ -138,8 +141,8 @@ bool Game::Render()
 	{
 		g_oct->RenderWireframe(m_wireCubeRenderer);
 	}
-	m_wireCubeRenderer->AddCube({}, 1);
 	m_wireCubeRenderer->Render();
+	m_gridDrawer->Render();
 	m_renderer->end_frame();
 
 	return true;

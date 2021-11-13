@@ -82,7 +82,7 @@ void dx11::DX11Renderer::end_frame()
 void dx11::DX11Renderer::clear_display()
 {
 	auto context = m_d3d->getDeviceContext();
-	float color[4] = { 0.39f, 0.58f, 0.92f, 1.0f };
+	float color[4] = { 0.16f, 0.16f, 0.16f, 1.0f };
 
 	context->ClearRenderTargetView(m_d3d->RenderTargetView(), color);
 	context->ClearDepthStencilView(m_d3d->DepthTargetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);

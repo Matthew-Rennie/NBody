@@ -13,6 +13,7 @@ namespace graphics
 {
 	class TextureManager;
 	class WireCubeRenderer;
+	class GridDrawer;
 }
 
 namespace dx11
@@ -68,6 +69,7 @@ protected:
 	graphics::FreeCamera camera;
 	graphics::TextureManager* m_textureManager = nullptr;
 	graphics::WireCubeRenderer* m_wireCubeRenderer = nullptr;
+	graphics::GridDrawer* m_gridDrawer = nullptr;
 
 	std::vector<Object3d> m_objects;
 	GravitySolverBase* m_gSolver;
