@@ -7,6 +7,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include "DX11/DX11VertexBuffer.h"
+#include <array>
 using namespace DirectX;
 
 namespace graphics
@@ -22,7 +23,20 @@ namespace dx11
 	class DX11Renderer;
 }
 
+enum class GravitySolverMode
+{
+	BruteForce_CPU = 0,
+	OctTree_CPU = 1,
+};
+
+static const std::array<const char*, 2> GravitySolverNames = {
+	"Brute Force CPU-Single-Thread",
+	"Barnes Hutt CPU-Single-Thread"
+};
+
 class GravitySolverBase;
+class GravitySolverOctTree;
+class GravitySolverBruteForce;
 
 class Game : public core::BaseApplication
 {
@@ -72,7 +86,10 @@ protected:
 	graphics::GridDrawer* m_gridDrawer = nullptr;
 
 	std::vector<Object3d> m_objects;
-	GravitySolverBase* m_gSolver;
+
+	GravitySolverMode m_gSolverMode = GravitySolverMode::BruteForce_CPU;
+	GravitySolverBruteForce* m_gSolverBruteForce = nullptr;
+	GravitySolverOctTree* m_gSolverOctTree = nullptr;
 
 	const double m_timestep = 0.0001f;
 };

@@ -50,18 +50,18 @@ void graphics::WireCubeRenderer::GenerateCubeLines(const WireCube& cube)
 {
 	dx11::DX11LineRenderer::Line lines[12] = {};
 
-	lines[0] = { {-cube.radius,-cube.radius,-cube.radius}, {cube.radius,-cube.radius,-cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[1] = { {-cube.radius,-cube.radius,cube.radius}, {cube.radius,-cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[2] = { {-cube.radius,-cube.radius,-cube.radius}, {-cube.radius,-cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[3] = { {cube.radius,-cube.radius,-cube.radius}, {cube.radius,-cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[4] = { {-cube.radius,cube.radius,-cube.radius}, {cube.radius,cube.radius,-cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[5] = { {-cube.radius,cube.radius,cube.radius}, {cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[6] = { {-cube.radius,cube.radius,-cube.radius}, {-cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[7] = { {cube.radius,cube.radius,-cube.radius}, {cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[8] = { {-cube.radius,-cube.radius,-cube.radius}, {-cube.radius,cube.radius,-cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[9] = { {-cube.radius,-cube.radius,cube.radius}, {-cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[10] = { {cube.radius,-cube.radius,-cube.radius}, {cube.radius,cube.radius,-cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
-	lines[11] = { {cube.radius,-cube.radius,cube.radius}, {cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_LINE_COLOR_GREEN };
+	lines[0] = { {-cube.radius,-cube.radius,-cube.radius}, {cube.radius,-cube.radius,-cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[1] = { {-cube.radius,-cube.radius,cube.radius}, {cube.radius,-cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[2] = { {-cube.radius,-cube.radius,-cube.radius}, {-cube.radius,-cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[3] = { {cube.radius,-cube.radius,-cube.radius}, {cube.radius,-cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[4] = { {-cube.radius,cube.radius,-cube.radius}, {cube.radius,cube.radius,-cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[5] = { {-cube.radius,cube.radius,cube.radius}, {cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[6] = { {-cube.radius,cube.radius,-cube.radius}, {-cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[7] = { {cube.radius,cube.radius,-cube.radius}, {cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[8] = { {-cube.radius,-cube.radius,-cube.radius}, {-cube.radius,cube.radius,-cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[9] = { {-cube.radius,-cube.radius,cube.radius}, {-cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[10] = { {cube.radius,-cube.radius,-cube.radius}, {cube.radius,cube.radius,-cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
+	lines[11] = { {cube.radius,-cube.radius,cube.radius}, {cube.radius,cube.radius,cube.radius}, CHEESEBOARD_DX11_COLOR_GREEN };
 
 	for (int i = 0; i < 12; i++)
 	{

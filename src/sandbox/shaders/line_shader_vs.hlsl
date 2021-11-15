@@ -9,7 +9,7 @@ cbuffer MatrixBuffer : register(b0)
 struct InputType
 {
 	float4 position : POSITION;
-    float3 color : NORMAL;
+    float3 color : COLOR;
 };
 
 struct OutputType

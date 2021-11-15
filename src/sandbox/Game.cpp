@@ -42,8 +42,8 @@ bool Game::Init()
 	m_wireCubeRenderer = new graphics::WireCubeRenderer(m_renderer, &camera);
 	m_gridDrawer = new graphics::GridDrawer(m_renderer, &camera);
 
-	// m_gSolver = new GravitySolverBruteForce();
-	m_gSolver = new GravitySolverOctTree();
+	m_gSolverBruteForce = new GravitySolverBruteForce();
+	m_gSolverOctTree = new GravitySolverOctTree();
 
 	InitObjects();
 
@@ -62,7 +62,8 @@ bool Game::Release()
 	SAFE_DELETE(m_textureManager);
 	SAFE_DELETE(m_wireCubeRenderer);
 	SAFE_DELETE(m_gridDrawer);
-	SAFE_DELETE(m_gSolver);
+	SAFE_DELETE(m_gSolverBruteForce);
+	SAFE_DELETE(m_gSolverOctTree);
 
 	return true;
 }
@@ -89,9 +90,23 @@ bool Game::Update(const double frame_time)
 		return false;
 	}
 
+	GravitySolverBase* gSolver = nullptr;
+	switch (m_gSolverMode)
+	{
+	case GravitySolverMode::BruteForce_CPU:
+		gSolver = m_gSolverBruteForce;
+		break;
+	case GravitySolverMode::OctTree_CPU:
+		gSolver = m_gSolverOctTree;
+		break;
+	default:
+		throw;
+	}
+
 	if (m_playing)
 	{
-		m_gSolver->CalculateForces(m_objects);
+		if (gSolver)
+			gSolver->CalculateForces(m_objects);
 
 		for (auto& obj : m_objects)
 		{
@@ -135,11 +150,11 @@ bool Game::Render(const double frame_time)
 		}
 	}
 
-	auto g_oct = dynamic_cast<GravitySolverOctTree*>(m_gSolver);
-	if (g_oct)
-	{
-		g_oct->RenderWireframe(m_wireCubeRenderer);
-	}
+	//auto g_oct = dynamic_cast<GravitySolverOctTree*>(m_gSolver);
+	//if (g_oct)
+	//{
+	//	g_oct->RenderWireframe(m_wireCubeRenderer);
+	//}
 	m_wireCubeRenderer->Render();
 	m_gridDrawer->Render();
 	m_renderer->end_frame();
@@ -770,6 +785,8 @@ void Game::RenderGUI()
 			m_playing = true;;
 	}
 
+	ImGui::Combo("##gSolverSelectorCombo", (int*)(&m_gSolverMode), GravitySolverNames.data(), (int)GravitySolverNames.size());
+
 	if (ImGui::CollapsingHeader("Debug Options"))
 	{
 		ImGui::Indent(10);
@@ -815,9 +832,8 @@ void Game::RenderGUI()
 		ImGui::Indent(-10);
 	}
 
-	auto g_oct = dynamic_cast<GravitySolverOctTree*>(m_gSolver);
-	if (g_oct)
+	if (m_gSolverOctTree && m_gSolverMode == GravitySolverMode::OctTree_CPU)
 	{
-		g_oct->DrawDebugGui();
+		m_gSolverOctTree->DrawDebugGui();
 	}
 }

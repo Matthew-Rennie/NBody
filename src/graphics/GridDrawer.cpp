@@ -24,13 +24,19 @@ void graphics::GridDrawer::Render()
 
 	for (int x = start; x <= end; x++)
 	{
-		m_lineRenderer->AddLine({ float(x), 0.f, -bigfloat }, { float(x), 0.f, bigfloat }, CHEESEBOARD_DX11_LINE_COLOR_DARKGREEN);
+		m_lineRenderer->AddLine({ float(x), 0.f, -bigfloat }, { float(x), 0.f, bigfloat }, m_col_x);
 	}
 
 	for (int z = start; z <= end; z++)
 	{
-		m_lineRenderer->AddLine({ -bigfloat, 0.f, float(z) }, { bigfloat, 0.f, float(z) }, CHEESEBOARD_DX11_LINE_COLOR_DARKRED);
+		m_lineRenderer->AddLine({ -bigfloat, 0.f, float(z) }, { bigfloat, 0.f, float(z) }, m_col_z);
 	}
 
 	m_lineRenderer->Render(m_camera->getViewMatrix());
+}
+
+void graphics::GridDrawer::SetColor(dx11::Color xAxis, dx11::Color zAxis)
+{
+	m_col_x = xAxis;
+	m_col_z = zAxis;
 }
