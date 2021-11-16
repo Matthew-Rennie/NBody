@@ -1,9 +1,9 @@
 local ROOT = "../../../"
 
- project "imGUI"
+ project "imGUI-Memory-Editor"
   kind "StaticLib"
   language "C++"
-  targetname "imGUI" -- the name of the executable saved to targetdir
+  targetname "imGUI-Memory-Editor" -- the name of the executable saved to targetdir
 
   -----------------------------------
 -- COMPILER/LINKER CONFIGURATIONS
@@ -32,7 +32,7 @@ filter { "configurations:Release" }
 
   local source_dir_root         = ROOT .. "src"
   local source_dir_dependencies = source_dir_root .. "/extern"
-  local source_dir_engine       = source_dir_root .. "/extern/imGUI"
+  local source_dir_engine       = source_dir_root .. "/extern/imGUI-Memory-Editor"
 
   local source_dir_includes     = source_dir_dependencies
   local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.host()
@@ -52,13 +52,18 @@ filter { "configurations:Release" }
     source_dir_engine .. "/**.glsl",
   }
 
+  links
+  {
+    "imGUI",
+  }
+
    -- Where compiler should look for library includes
    -- NOTE: for library headers always use  '#include <LIB/lib.hpp>' not quotes
    includedirs
    {
     source_dir_root,
      source_dir_includes,
-     source_dir_engine,
+     source_dir_dependencies .. "imGUI",
    }
    
    -- Where linker should look for library files

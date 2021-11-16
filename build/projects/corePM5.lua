@@ -55,7 +55,7 @@ filter { "configurations:Release" }
 
   links
   {
-    "graphics"
+    "graphics",
   }
 
    -- Where compiler should look for library includes

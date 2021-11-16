@@ -4,8 +4,8 @@
 #include "DX11Shader.h"
 #include <stdexcept>
 #include "imGUI/imgui.h"
-#include "imGUI/imgui_impl_dx11.h"
-#include "imGUI/imgui_impl_win32.h"
+#include "imGUI/backends/imgui_impl_dx11.h"
+#include "imGUI/backends/imgui_impl_win32.h"
 #include "graphics/TextureManager.h"
 
 dx11::DX11Renderer::DX11Renderer(core::Input* in)
