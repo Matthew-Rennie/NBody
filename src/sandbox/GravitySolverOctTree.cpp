@@ -102,7 +102,7 @@ void GravitySolverOctTree::DrawDebugGuiNode(OctTreeNode* node)
 	auto makeImGuiTag = [&](std::string s) -> std::string
 	{
 		std::string return_value = s +
-			"##memAddr=" + std::to_string(reinterpret_cast<long>(node)) +
+			"##memAddr=" + std::to_string(reinterpret_cast<size_t>(node)) +
 			"_count=" + std::to_string(count) +
 			"_i=" + std::to_string(++i);
 

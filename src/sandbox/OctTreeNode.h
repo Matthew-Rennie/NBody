@@ -13,7 +13,7 @@ public:
 
 	OctTreeNode* m_parent = nullptr;
 	std::vector<Object3d*> m_objects;
-	std::array<OctTreeNode*, 8> m_children;
+	std::array<OctTreeNode*, 8> m_children = {};
 
 	bool SubDivide();
 	bool CalculateMass();

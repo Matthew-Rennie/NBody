@@ -128,7 +128,7 @@ bool dx11::DX11Shader::load_VS(wchar_t* filename, const D3D11_INPUT_ELEMENT_DESC
 	m_device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), nullptr, &m_vertexShader);
 
 	// Get a count of the elements in the layout.
-	numElements = polygonLayoutSize / sizeof(polygonLayout[0]);
+	numElements = (unsigned int)(polygonLayoutSize / sizeof(polygonLayout[0]));
 
 	// Create the vertex input layout.
 	m_device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);

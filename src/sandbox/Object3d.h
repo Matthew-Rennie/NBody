@@ -50,7 +50,7 @@ public:
 
 protected:
 
-	glm::dvec3 m_lastTickForce;
+	glm::dvec3 m_lastTickForce = glm::dvec3(0.f);
 
 	std::vector<Force> m_forces;
 
