@@ -8,6 +8,7 @@
 
 #include "GravitySolverBruteForce.h"
 #include "GravitySolverOctTree.h"
+#include "GravitySolverOctTreeMulti.h"
 
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
@@ -44,6 +45,7 @@ bool Game::Init()
 
 	m_gSolverBruteForce = new GravitySolverBruteForce();
 	m_gSolverOctTree = new GravitySolverOctTree();
+	m_gSolverOctTreeMulti = new GravitySolverOctTreeMulti();
 
 	InitObjects();
 
@@ -64,6 +66,7 @@ bool Game::Release()
 	SAFE_DELETE(m_gridDrawer);
 	SAFE_DELETE(m_gSolverBruteForce);
 	SAFE_DELETE(m_gSolverOctTree);
+	SAFE_DELETE(m_gSolverOctTreeMulti);
 
 	return true;
 }
@@ -93,11 +96,14 @@ bool Game::Update(const double frame_time)
 	GravitySolverBase* gSolver = nullptr;
 	switch (m_gSolverMode)
 	{
-	case GravitySolverMode::BruteForce_CPU:
+	case GravitySolverMode::BRUTE_FORCE_CPU_SINGLE:
 		gSolver = m_gSolverBruteForce;
 		break;
-	case GravitySolverMode::OctTree_CPU:
+	case GravitySolverMode::OCTTREE_CPU_SINGLE:
 		gSolver = m_gSolverOctTree;
+		break;
+	case GravitySolverMode::OCTTREE_CPU_MULTI:
+		gSolver = m_gSolverOctTreeMulti;
 		break;
 	default:
 		throw;
@@ -719,9 +725,9 @@ void Game::GenerateCubeMesh()
 
 void Game::InitObjects()
 {
-	int count_x = 3;
+	int count_x = 50;
 	int count_y = 1;
-	int count_z = 3;
+	int count_z = 50;
 
 	for (int x = 0; x < count_x; x++)
 	{
@@ -832,7 +838,7 @@ void Game::RenderGUI()
 		ImGui::Indent(-10);
 	}
 
-	if (m_gSolverOctTree && m_gSolverMode == GravitySolverMode::OctTree_CPU)
+	if (m_gSolverOctTree && m_gSolverMode == GravitySolverMode::OCTTREE_CPU_SINGLE)
 	{
 		m_gSolverOctTree->DrawDebugGui();
 	}
