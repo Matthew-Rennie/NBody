@@ -179,6 +179,7 @@ namespace core::TTM
 					{
 						task->run_func();
 					}
+					delete task;
 				}
 			}
 		}
