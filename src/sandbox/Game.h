@@ -78,7 +78,6 @@ protected:
 
 	void InitWindow();
 
-	void GenerateCubeMesh();
 	void InitObjects();
 
 	double SystemKineticEnergy();
