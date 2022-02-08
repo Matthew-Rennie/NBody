@@ -23,4 +23,8 @@ workspace "Engine"
   dofile "projects/extern/imguiMemoryEditorPM5.lua"
   dofile "projects/extern/directXtkPM5.lua"
   dofile "projects/extern/glmPM5.lua"
+  dofile "projects/extern/rapidjsonPM5.lua"
+
+
+  
   
