@@ -26,12 +26,14 @@ namespace dx11
 enum class GravitySolverMode
 {
 	BRUTE_FORCE_CPU_SINGLE = 0,
-	OCTTREE_CPU_SINGLE = 1,
-	OCTTREE_CPU_MULTI = 2,
+	BRUTE_FORCE_CPU_MULTI = 1,
+	OCTTREE_CPU_SINGLE = 2,
+	OCTTREE_CPU_MULTI = 3,
 };
 
-static const std::array<const char*, 3> GravitySolverNames = {
+static const std::array<const char*, 4> GravitySolverNames = {
 	"Brute Force CPU-Single-Thread",
+	"Brute Force CPU-Multi-Thread",
 	"Barnes Hutt CPU-Single-Thread",
 	"Barnes Hutt CPU-Multi-Thread",
 };
@@ -40,6 +42,7 @@ class GravitySolverBase;
 class GravitySolverOctTree;
 class GravitySolverOctTreeMulti;
 class GravitySolverBruteForce;
+class GravitySolverBruteForceMulti;
 
 class Game : public core::BaseApplication
 {
@@ -92,6 +95,7 @@ protected:
 
 	GravitySolverMode m_gSolverMode = GravitySolverMode::BRUTE_FORCE_CPU_SINGLE;
 	GravitySolverBruteForce* m_gSolverBruteForce = nullptr;
+	GravitySolverBruteForceMulti* m_gSolverBruteForceMulti = nullptr;
 	GravitySolverOctTree* m_gSolverOctTree = nullptr;
 	GravitySolverOctTreeMulti* m_gSolverOctTreeMulti = nullptr;
 

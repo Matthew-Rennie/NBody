@@ -7,6 +7,7 @@
 #include "graphics/GridDrawer.h"
 
 #include "GravitySolverBruteForce.h"
+#include "GravitySolverBruteForceMulti.h"
 #include "GravitySolverOctTree.h"
 #include "GravitySolverOctTreeMulti.h"
 
@@ -44,6 +45,7 @@ bool Game::Init()
 	m_gridDrawer = new graphics::GridDrawer(m_renderer, &camera);
 
 	m_gSolverBruteForce = new GravitySolverBruteForce();
+	m_gSolverBruteForceMulti = new GravitySolverBruteForceMulti();
 	m_gSolverOctTree = new GravitySolverOctTree();
 	m_gSolverOctTreeMulti = new GravitySolverOctTreeMulti();
 
@@ -65,6 +67,7 @@ bool Game::Release()
 	SAFE_DELETE(m_wireCubeRenderer);
 	SAFE_DELETE(m_gridDrawer);
 	SAFE_DELETE(m_gSolverBruteForce);
+	SAFE_DELETE(m_gSolverBruteForceMulti);
 	SAFE_DELETE(m_gSolverOctTree);
 	SAFE_DELETE(m_gSolverOctTreeMulti);
 
@@ -80,9 +83,9 @@ bool Game::Update(const double frame_time)
 		m_fps = 1.f / frame_time;
 		m_guiUpdateClock = 0;
 
-		EnergyP = SystemPotentialEnergy();
-		EnergyK = SystemKineticEnergy();
-		EnergyTotal = EnergyK + EnergyP;
+		// EnergyP = SystemPotentialEnergy();
+		// EnergyK = SystemKineticEnergy();
+		// EnergyTotal = EnergyK + EnergyP;
 	}
 
 	if (!BaseApplication::Update(frame_time))
@@ -98,6 +101,9 @@ bool Game::Update(const double frame_time)
 	{
 	case GravitySolverMode::BRUTE_FORCE_CPU_SINGLE:
 		gSolver = m_gSolverBruteForce;
+		break;
+	case GravitySolverMode::BRUTE_FORCE_CPU_MULTI:
+		gSolver = m_gSolverBruteForceMulti;
 		break;
 	case GravitySolverMode::OCTTREE_CPU_SINGLE:
 		gSolver = m_gSolverOctTree;
