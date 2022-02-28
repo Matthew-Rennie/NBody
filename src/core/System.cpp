@@ -13,6 +13,7 @@ void core::System::Run(BaseApplication* app)
 	ZeroMemory(&msg, sizeof(MSG));
 
 	CB_LOG_INIT;
+	CB_LOG_VERSION;
 
 	done = !app->Init();
 	CB_LOG("Initialization Complete");

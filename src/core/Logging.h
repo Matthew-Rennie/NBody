@@ -14,27 +14,48 @@
 
 #if CB_LOGGING_USE_FILE_NAME
 
-#define CB_LOG(message) core::LogInternal::Log(__FILE__, __FUNCTION__, __LINE__, message)
-namespace core::LogInternal
+#define CB_LOG(message) core::Impl::Log(__FILE__, __FUNCTION__, __LINE__, message)
+namespace core::Impl
 {
 	void Log(const char* file, const char* func, int line, const char* message);
+	
+	inline void Log(const char* file, const char* func, int line, std::string message)
+	{
+		Log(file, func, line, message.c_str());
+	}
+	template<typename T>
+	inline void Log(const char* file, const char* func, int line, T message)
+	{
+		Log(file, func, line, std::to_string(message).c_str());
+	}
 }
 
 #else
 
-#define CB_LOG(message) core::LogInternal::Log(__FUNCTION__, __LINE__, message)
-namespace core::LogInternal
+#define CB_LOG(message) core::Impl::Log(__FUNCTION__, __LINE__, message)
+namespace core::Impl
 {
 	void Log(const char* func, int line, const char* message);
+
+	inline void Log(const char* func, int line, std::string message)
+	{
+		Log(func, line, message.c_str());
+	}
+	template<typename T>
+	inline void Log(const char* func, int line, T message)
+	{
+		Log(func, line, std::to_string(message).c_str());
+	}
 }
 
 #endif
 
-#define CB_LOG_FRAME core::LogInternal::WriteQueueToDisk()
-#define CB_LOG_INIT core::LogInternal::InitDisk()
-#define CB_LOG_RELEASE core::LogInternal::ReleaseDisk()
+#define CB_LOG_FRAME core::Impl::WriteQueueToDisk()
+#define CB_LOG_INIT core::Impl::InitDisk()
+#define CB_LOG_RELEASE core::Impl::ReleaseDisk()
+#define CB_LOG_VERSION core::Impl::LogVersion()
 
-namespace core::LogInternal
+namespace core::Impl
 {
 
 	static std::queue<std::string> log_message_queue;
@@ -43,6 +64,8 @@ namespace core::LogInternal
 	void WriteQueueToDisk();
 	void InitDisk();
 	void ReleaseDisk();
+	void LogVersion();
+	void LogInternal(const char* text);
 }
 
 

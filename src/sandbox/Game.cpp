@@ -2,10 +2,12 @@
 #include "Game.h"
 #include "imGUI/imgui.h"
 #include "core/Window.h"
+#include "core/Timer.h"
 #include "graphics/TextureManager.h"
 #include "graphics/WireCubeRenderer.h"
 #include "graphics/GridDrawer.h"
 #include "MeshBuilder.h"
+#include "utils.h"
 
 #include "GravitySolverBruteForce.h"
 #include "GravitySolverBruteForceMulti.h"
@@ -15,7 +17,6 @@
 #include "DX11/DX11Renderer.h"
 #include "DX11/DX11VertexBuffer.h"
 #include "DX11/DX11Shader.h"
-
 bool Game::Init()
 {
 	if (!BaseApplication::Init())
@@ -50,8 +51,7 @@ bool Game::Init()
 	m_gSolverOctTree = new GravitySolverOctTree();
 	m_gSolverOctTreeMulti = new GravitySolverOctTreeMulti();
 
-	InitObjects();
-
+	// InitObjectsGrid();
 	return true;
 }
 
@@ -196,7 +196,7 @@ void Game::InitWindow()
 	m_window = new core::Window(&m_input, config);
 }
 
-void Game::InitObjects()
+void Game::InitObjectsGrid()
 {
 	int count_x = 50;
 	int count_y = 1;
@@ -226,6 +226,77 @@ void Game::InitObjects()
 	// m_objects[0].SetMass(1.f);
 	// m_objects[1].SetMass(9.f);
 }	//
+
+void Game::InitObjectsOrbit()
+{
+
+}
+
+void Game::RunTest(int numIterations)
+{
+
+	auto testScript = [&](GravitySolverMode gSolverMode) -> void
+	{
+		GravitySolverBase* gSolver = nullptr;
+		std::string log_text;
+
+		switch (gSolverMode)
+		{
+		case GravitySolverMode::BRUTE_FORCE_CPU_SINGLE:
+			log_text = "Beginning Test [gSolverMode = BRUTE_FORCE_CPU_SINGLE] [iterations = {}] [time = {}]";
+			gSolver = m_gSolverBruteForce;
+			break;
+		case GravitySolverMode::BRUTE_FORCE_CPU_MULTI:
+			log_text = "Beginning Test [gSolverMode = BRUTE_FORCE_CPU_MULTI ] [iterations = {}] [time = {}]";
+			gSolver = m_gSolverBruteForceMulti;
+			break;
+		case GravitySolverMode::OCTTREE_CPU_SINGLE:
+			log_text = "Beginning Test [gSolverMode = OCTTREE_CPU_SINGLE    ] [iterations = {}] [time = {}]";
+			gSolver = m_gSolverOctTree;
+			break;
+		case GravitySolverMode::OCTTREE_CPU_MULTI:
+			log_text = "Beginning Test [gSolverMode = OCTTREE_CPU_MULTI     ] [iterations = {}] [time = {}]";
+			gSolver = m_gSolverOctTreeMulti;
+			break;
+		default:
+			throw;
+		}
+
+		InitObjectsGrid();
+		
+		core::Timer timer;
+
+		for (int i = 0; i < numIterations; i++)
+		{
+			gSolver->CalculateForces(m_objects);
+			for (auto& obj : m_objects)
+			{
+				obj.Update(m_timestep);
+			}
+		}
+		timer.frame();
+
+		log_text = utils::format(log_text, numIterations, timer.getTime());
+		CB_LOG(log_text);
+
+		CleanupObjects();
+
+	};
+	
+	CB_LOG("Running Tests");
+
+	testScript(GravitySolverMode::BRUTE_FORCE_CPU_SINGLE);
+	testScript(GravitySolverMode::BRUTE_FORCE_CPU_MULTI);
+	testScript(GravitySolverMode::OCTTREE_CPU_SINGLE);
+	testScript(GravitySolverMode::OCTTREE_CPU_MULTI);
+
+	CB_LOG("Tests Complete");
+}
+
+void Game::CleanupObjects()
+{
+	m_objects.clear();
+}
 
 double Game::SystemKineticEnergy()
 {
@@ -276,6 +347,17 @@ void Game::RenderGUI()
 
 		ImGui::Indent(-10);
 	}
+
+	if (ImGui::CollapsingHeader("Tests"))
+	{
+		ImGui::Indent(10);
+
+		if (ImGui::Button("Run Tests"))
+			RunTest(100);
+
+		ImGui::Indent(-10);
+	}
+
 
 	if (ImGui::CollapsingHeader("Performance"))
 	{

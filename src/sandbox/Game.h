@@ -78,7 +78,12 @@ protected:
 
 	void InitWindow();
 
-	void InitObjects();
+	void InitObjectsGrid();
+	void InitObjectsOrbit();
+
+	void RunTest(int numIterations);
+
+	void CleanupObjects();
 
 	double SystemKineticEnergy();
 	double SystemPotentialEnergy();

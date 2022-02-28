@@ -1,4 +1,5 @@
 #pragma once
+#include "core/Logging.h"
 
 #define SAFE_DELETE(p) if ((p) != NULL) { delete (p); (p) = NULL; }
 #define SAFE_DELETE_ARR(p) if ((p) != NULL) { delete[] (p); (p) = NULL; }
