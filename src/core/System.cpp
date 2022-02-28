@@ -2,6 +2,7 @@
 #include "System.h"
 
 #include <windows.h>
+#include "core/Logging.h"
 
 void core::System::Run(BaseApplication* app)
 {
@@ -11,7 +12,10 @@ void core::System::Run(BaseApplication* app)
 	// Initialize the message structure.
 	ZeroMemory(&msg, sizeof(MSG));
 
+	CB_LOG_INIT;
+
 	done = !app->Init();
+	CB_LOG("Initialization Complete");
 
 	// Loop until there is a quit message from the window or the user.
 	while (!done)
@@ -44,13 +48,19 @@ void core::System::Run(BaseApplication* app)
 				if (!result)
 				{
 					done = true;
+					CB_LOG_FRAME;
 					break;
 				}
+				CB_LOG_FRAME;
 			}
 		}
 	}
 
 	app->Release();
+	CB_LOG("Release Complete");
+
+	CB_LOG_FRAME;
+	CB_LOG_RELEASE;
 
 	PostQuitMessage(0);
 	return;
