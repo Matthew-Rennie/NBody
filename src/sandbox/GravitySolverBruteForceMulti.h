@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GravitySolverBase.h"
-#include "Force.h"
 
 namespace core::TTM
 {

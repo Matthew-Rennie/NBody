@@ -1,7 +1,6 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include "Force.h"
 #include "DX11/DX11VertexBuffer.h"
 
 namespace dx11
