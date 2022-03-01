@@ -3,7 +3,7 @@
 #include "Object3d.h"
 #include "core/ThreadTaskManager.h"
 
-#define BARNES_HUTT_MULTI_THETA DOUBLE(1.2)
+#define BARNES_HUTT_MULTI_THETA DOUBLE(0.8)
 #define BARNES_HUTT_MULTI_MIN_DISTANCE DOUBLE(0.25)
 
 OctTreeNodeMulti::~OctTreeNodeMulti()

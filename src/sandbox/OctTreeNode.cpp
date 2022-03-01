@@ -2,7 +2,7 @@
 #include "OctTreeNode.h"
 #include "Object3d.h"
 
-#define BARNES_HUTT_THETA DOUBLE(1.2)
+#define BARNES_HUTT_THETA DOUBLE(0.8)
 #define BARNES_HUTT_MIN_DISTANCE DOUBLE(0.25)
 
 OctTreeNode::~OctTreeNode()
@@ -219,7 +219,7 @@ bool OctTreeNode::CalculateForces()
 			node = node->m_parent;
 		}
 	}
-
+	
 	// dead end, no more objects here
 	//if (m_children[0] == nullptr)
 	//	return true;
@@ -245,7 +245,7 @@ void OctTreeNode::CalcForceRecursive(const OctTreeNode* node, const OctTreeNode*
 
 		glm::dvec3 dir = c->m_centreOfMass - m_objects[0]->Position();
 		const double r = glm::length(dir);
-		const double d = (c->m_lenPointToEdge * 2) / r;
+		const double d = (c->m_lenPointToEdge * 2.0) / r;
 
 		if (d > BARNES_HUTT_THETA)
 		{

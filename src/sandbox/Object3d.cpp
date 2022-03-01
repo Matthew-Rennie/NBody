@@ -13,10 +13,11 @@ void Object3d::Update(const double dt)
 	m_lastTickForce = m_force;
 
 	m_force /= m_mass;
-	m_force *= dt;
 
 	m_velocity += m_force * dt;
 	m_position += m_velocity * dt;
+
+	m_force = glm::dvec3();
 }
 
 void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* camera)

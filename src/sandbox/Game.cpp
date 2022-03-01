@@ -51,7 +51,7 @@ bool Game::Init()
 	m_gSolverOctTree = new GravitySolverOctTree();
 	m_gSolverOctTreeMulti = new GravitySolverOctTreeMulti();
 
-	// InitObjectsGrid();
+	InitObjectsOrbit();
 	return true;
 }
 
@@ -229,6 +229,46 @@ void Game::InitObjectsGrid()
 
 void Game::InitObjectsOrbit()
 {
+	const double solar_mass = 100.0;
+	const double comet_mass = 1.0;
+
+	m_objects.emplace_back(m_textureManager);
+	m_objects[m_objects.size() - 1].SetPosition({ 0,0,0 });
+	m_objects[m_objects.size() - 1].SetMass(solar_mass);
+
+	auto spawnCometACW = [&](double radius)
+	{
+		double velocity = glm::sqrt(solar_mass / radius);
+
+		m_objects.emplace_back(m_textureManager);
+		m_objects[m_objects.size() - 1].SetPosition({ radius,0,0 });
+		m_objects[m_objects.size() - 1].SetMass(comet_mass);
+		m_objects[m_objects.size() - 1].SetVelocity({ 0,0,velocity });
+
+	};
+
+	auto spawnCometCW = [&](double radius)
+	{
+		double velocity = glm::sqrt(solar_mass / radius);
+
+		m_objects.emplace_back(m_textureManager);
+		m_objects[m_objects.size() - 1].SetPosition({ -radius,0,0 });
+		m_objects[m_objects.size() - 1].SetMass(comet_mass);
+		m_objects[m_objects.size() - 1].SetVelocity({ 0,0,-velocity });
+
+	};
+
+	spawnCometACW(5);
+	spawnCometACW(10);
+	spawnCometACW(15);
+	spawnCometACW(20);
+	spawnCometACW(25);
+
+	spawnCometCW(5);
+	spawnCometCW(10);
+	spawnCometCW(15);
+	spawnCometCW(20);
+	spawnCometCW(25);
 
 }
 
