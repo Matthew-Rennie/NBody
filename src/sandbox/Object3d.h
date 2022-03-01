@@ -36,8 +36,8 @@ public:
 	void SetPosition(const glm::dvec3 pos) { m_position = pos; }
 	void SetVelocity(const glm::dvec3 vel) { m_velocity = vel; }
 
-	void ApplyForce(const Force force) { m_forces.push_back(force); }
-	void ApplyForce(const glm::dvec3 dir, const double mag) { m_forces.emplace_back(dir, mag); }
+	void ApplyForce(const glm::dvec3 force) { m_force += force; }
+	inline void ApplyForce(const glm::dvec3 dir, const double mag) { ApplyForce(dir * mag); }
 
 	void SetVertexBuff(dx11::DX11VertexBuffer<dx11::VertexType>* vbuff) { m_vbuffer = vbuff; }
 
@@ -51,8 +51,7 @@ public:
 protected:
 
 	glm::dvec3 m_lastTickForce = glm::dvec3(0.f);
-
-	std::vector<Force> m_forces;
+	glm::dvec3 m_force;
 
 	double m_mass = 0.f;
 	glm::dvec3 m_position = glm::dvec3(0.f);

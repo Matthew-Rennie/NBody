@@ -243,19 +243,19 @@ void Game::RunTest(int numIterations)
 		switch (gSolverMode)
 		{
 		case GravitySolverMode::BRUTE_FORCE_CPU_SINGLE:
-			log_text = "Beginning Test [gSolverMode = BRUTE_FORCE_CPU_SINGLE] [iterations = {}] [time = {}]";
+			log_text = "[gSolverMode = BRUTE_FORCE_CPU_SINGLE] [iterations = {}] [time = {}]";
 			gSolver = m_gSolverBruteForce;
 			break;
 		case GravitySolverMode::BRUTE_FORCE_CPU_MULTI:
-			log_text = "Beginning Test [gSolverMode = BRUTE_FORCE_CPU_MULTI ] [iterations = {}] [time = {}]";
+			log_text = "[gSolverMode = BRUTE_FORCE_CPU_MULTI ] [iterations = {}] [time = {}]";
 			gSolver = m_gSolverBruteForceMulti;
 			break;
 		case GravitySolverMode::OCTTREE_CPU_SINGLE:
-			log_text = "Beginning Test [gSolverMode = OCTTREE_CPU_SINGLE    ] [iterations = {}] [time = {}]";
+			log_text = "[gSolverMode = OCTTREE_CPU_SINGLE    ] [iterations = {}] [time = {}]";
 			gSolver = m_gSolverOctTree;
 			break;
 		case GravitySolverMode::OCTTREE_CPU_MULTI:
-			log_text = "Beginning Test [gSolverMode = OCTTREE_CPU_MULTI     ] [iterations = {}] [time = {}]";
+			log_text = "[gSolverMode = OCTTREE_CPU_MULTI     ] [iterations = {}] [time = {}]";
 			gSolver = m_gSolverOctTreeMulti;
 			break;
 		default:

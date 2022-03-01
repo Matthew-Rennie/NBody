@@ -10,19 +10,12 @@
 
 void Object3d::Update(const double dt)
 {
-	glm::dvec3 acceleration = glm::dvec3(0.f);
+	m_lastTickForce = m_force;
 
-	for (auto& force : m_forces)
-	{
-		acceleration += force.dir * force.mag;
-	}
-	m_lastTickForce = acceleration;
-	m_forces.clear();
+	m_force /= m_mass;
+	m_force *= dt;
 
-	acceleration /= Mass();
-	acceleration *= dt;
-
-	m_velocity += acceleration * dt;
+	m_velocity += m_force * dt;
 	m_position += m_velocity * dt;
 }
 

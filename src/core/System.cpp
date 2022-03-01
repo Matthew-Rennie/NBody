@@ -58,7 +58,7 @@ void core::System::Run(BaseApplication* app)
 	}
 
 	app->Release();
-	CB_LOG("Release Complete");
+	CB_LOG("Cleanup Complete");
 
 	CB_LOG_FRAME;
 	CB_LOG_RELEASE;
