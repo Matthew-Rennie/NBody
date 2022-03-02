@@ -47,7 +47,11 @@ public:
 
 	glm::dvec3 LastTickForce() { return m_lastTickForce; }
 
+	void SetTexture(const std::string& name) { m_textureName = name; }
+
 protected:
+
+	std::string m_textureName = "default_texture";
 
 	glm::dvec3 m_lastTickForce = glm::dvec3(0.f);
 	glm::dvec3 m_force;

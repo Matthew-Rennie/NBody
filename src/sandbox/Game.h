@@ -77,6 +77,7 @@ protected:
 	dx11::DX11VertexBuffer<dx11::VertexType>* m_vbuffer = nullptr;
 
 	void InitWindow();
+	void InitTextures();
 
 	void InitObjectsGrid();
 	void InitObjectsOrbit();

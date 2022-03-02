@@ -40,8 +40,7 @@ bool Game::Init()
 	camera.setInput(&m_input);
 	camera.setWindow(m_window);
 
-	m_textureManager = new graphics::TextureManager(m_renderer);
-	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
+	InitTextures();
 
 	m_wireCubeRenderer = new graphics::WireCubeRenderer(m_renderer, &camera);
 	m_gridDrawer = new graphics::GridDrawer(m_renderer, &camera);
@@ -196,6 +195,17 @@ void Game::InitWindow()
 	m_window = new core::Window(&m_input, config);
 }
 
+void Game::InitTextures()
+{
+	m_textureManager = new graphics::TextureManager(m_renderer);
+	m_textureManager->AddTexture(L"res/bunny.png", "bunny");
+
+	m_textureManager->AddTexture(L"res/purple.png", "default_texture");
+	m_textureManager->AddTexture(L"res/blue.png", "blue");
+	m_textureManager->AddTexture(L"res/green.png", "green");
+	m_textureManager->AddTexture(L"res/yellow.png", "yellow");
+}
+
 void Game::InitObjectsGrid()
 {
 	int count_x = 50;
@@ -235,6 +245,7 @@ void Game::InitObjectsOrbit()
 	m_objects.emplace_back(m_textureManager);
 	m_objects[m_objects.size() - 1].SetPosition({ 0,0,0 });
 	m_objects[m_objects.size() - 1].SetMass(solar_mass);
+	m_objects[m_objects.size() - 1].SetTexture("yellow");
 
 	auto spawnCometACW = [&](double radius)
 	{
@@ -244,6 +255,7 @@ void Game::InitObjectsOrbit()
 		m_objects[m_objects.size() - 1].SetPosition({ radius,0,0 });
 		m_objects[m_objects.size() - 1].SetMass(comet_mass);
 		m_objects[m_objects.size() - 1].SetVelocity({ 0,0,velocity });
+		m_objects[m_objects.size() - 1].SetTexture("green");
 
 	};
 
@@ -255,7 +267,7 @@ void Game::InitObjectsOrbit()
 		m_objects[m_objects.size() - 1].SetPosition({ -radius,0,0 });
 		m_objects[m_objects.size() - 1].SetMass(comet_mass);
 		m_objects[m_objects.size() - 1].SetVelocity({ 0,0,-velocity });
-
+		m_objects[m_objects.size() - 1].SetTexture("green");
 	};
 
 	spawnCometACW(5);

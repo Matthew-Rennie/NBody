@@ -49,7 +49,7 @@ void Object3d::Render(dx11::DX11Renderer* renderer, graphics::CustomCamera* came
 	if (renderer && m_textureManager && m_vbuffer)
 	{
 		renderer->send_data(&shaderData);
-		renderer->setTexture(m_textureManager->getTexture("bunny"), 0);
+		renderer->setTexture(m_textureManager->getTexture(m_textureName), 0);
 		renderer->render(m_vbuffer);
 	}
 }
