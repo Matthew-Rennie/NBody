@@ -12,9 +12,15 @@ GravitySolverOctTree::~GravitySolverOctTree()
 bool GravitySolverOctTree::CalculateForces(std::vector<Object3d>& objects)
 {
 	SAFE_DELETE(root);
+	
 	root = BuildTree(objects);
-	root->CalculateMass();
-	root->CalculateForces();
+
+	if (root)
+	{
+		root->CalculateMass();
+		root->CalculateForces();
+	}
+
 	return true;
 }
 

@@ -18,12 +18,16 @@ GravitySolverOctTreeMulti::~GravitySolverOctTreeMulti()
 bool GravitySolverOctTreeMulti::CalculateForces(std::vector<Object3d>& objects)
 {
 	SAFE_DELETE(root);
+
 	root = BuildTree(objects);
 
-	m_ttm->add_task(OctTreeNodeMulti::CalculateMass, root, m_ttm);
-	m_ttm->wait();
-	m_ttm->add_task(OctTreeNodeMulti::CalculateForces, root, m_ttm);
-	m_ttm->wait();
+	if (root)
+	{
+		m_ttm->add_task(OctTreeNodeMulti::CalculateMass, root, m_ttm);
+		m_ttm->wait();
+		m_ttm->add_task(OctTreeNodeMulti::CalculateForces, root, m_ttm);
+		m_ttm->wait();
+	}
 
 	return true;
 }
